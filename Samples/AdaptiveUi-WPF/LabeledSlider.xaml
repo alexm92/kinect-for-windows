@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="Microsoft.Samples.Kinect.AdaptiveUI.LabeledSlider"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d"
+             d:DesignHeight="50"
+             FontSize="10pt"
+             FontWeight="Light"
+             >
+    <UserControl.Resources>
+        <Style TargetType="{x:Type TextBox}">
+            <Setter Property="Background" Value="{StaticResource TextBoxBackgroundBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource LightGrayBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource LightGrayBrush}" />
+        </Style>
+    </UserControl.Resources>
+    
+    <DockPanel x:Name="LayoutRoot" LastChildFill="True" Margin="30,4,149,0">
+        <TextBlock DockPanel.Dock="Left" VerticalAlignment="Top" Margin="0, -2, 0, 0" Width="88" TextAlignment="Left" Foreground="{StaticResource LightGrayBrush}" Text="{Binding Path=Title,FallbackValue=Title}"/>
+        <TextBox x:Name="textBox" DockPanel.Dock="Left" VerticalAlignment="Top" Width="40" Height="15" TextAlignment="Right" Padding="0,-2.8,0,0" Text="{Binding Path=SliderValue,StringFormat=F3,FallbackValue=0.0}" KeyDown="TextBox_KeyDown" MouseDoubleClick="TextBox_MouseDoubleClick"/>
+        <TextBlock DockPanel.Dock="Left" VerticalAlignment="Top" Margin="4,-2,0,0" Width="15" TextAlignment="Left" Foreground="{StaticResource LightGrayBrush}" Text="{Binding Path=Units,FallbackValue=U}"/>
+        <Slider VerticalAlignment="Top" Margin="1,-1.5,0,0" Height="18" Minimum="{Binding Path=Minimum}" Maximum="{Binding Path=Maximum}" SmallChange="{Binding Path=SmallChange}" LargeChange="{Binding Path=LargeChange}" TickFrequency="{Binding Path=TickFrequency}" IsSnapToTickEnabled="{Binding Path=IsSnapToTickEnabled}" Value="{Binding Path=SliderValue}"/>
+    </DockPanel>
+</UserControl>

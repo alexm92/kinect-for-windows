@@ -1,0 +1,49 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:k="http://schemas.microsoft.com/kinect/2013"
+             x:Class="Microsoft.Samples.Kinect.AdaptiveUI.UserTrackingControl" 
+             mc:Ignorable="d"
+             HorizontalAlignment="Left"
+             VerticalAlignment="Top"
+             Background="{x:Null}">
+
+    <UserControl.Resources>
+
+        <Style x:Key="MessageButtonStyle" TargetType="{x:Type k:KinectTileButton}">
+            <Setter Property="Background" Value="{StaticResource KinectBlueBrush}" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Width" Value="300" />
+            <Setter Property="Height" Value="300" />
+        </Style>
+
+    </UserControl.Resources>
+
+    <Viewbox Stretch="Uniform">
+        <Grid Width="300" Height="300">
+            <k:KinectTileButton x:Name="InformationButton" Style="{StaticResource MessageButtonStyle}" Click="InformationButtonClicked" >
+                <TextBlock TextWrapping="Wrap" TextAlignment="Left" Margin="4">
+                    <Run FontWeight="Light">This is the optimal location for far range interactions.</Run>
+                    <LineBreak/>
+                    <LineBreak/>
+                    <Run FontWeight="Medium">Try moving closer to near range.</Run>
+                </TextBlock>
+            </k:KinectTileButton>
+
+            <k:KinectTileButton x:Name="StartingButton" Style="{StaticResource MessageButtonStyle}" Click="StartingButtonClicked">
+                <TextBlock TextWrapping="Wrap" TextAlignment="Center" Margin="4" FontSize="64" FontWeight="Light">
+                    <Run>Press</Run>
+                    <LineBreak/>
+                    <Run>me!</Run>
+                </TextBlock>
+            </k:KinectTileButton>
+
+            <Rectangle x:Name="FadeOutOverlay" Fill="{StaticResource FadeOutOverlayBrush}" Margin="5" />
+
+        </Grid>
+    </Viewbox>
+</UserControl>

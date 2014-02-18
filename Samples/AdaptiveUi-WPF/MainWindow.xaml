@@ -1,0 +1,66 @@
+﻿<Window x:Class="Microsoft.Samples.Kinect.AdaptiveUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:k="http://schemas.microsoft.com/kinect/2013"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Microsoft.Samples.Kinect.AdaptiveUI"
+        Title="Adaptive UI"
+        Closing="WindowClosing"
+        mc:Ignorable="d"
+        d:DesignWidth="1024"
+        d:DesignHeight="768"
+        MinWidth="512"
+        MinHeight="384"
+        FontFamily="Segoe UI"
+        WindowState="Maximized"
+        >
+
+    <Window.CommandBindings>
+        <CommandBinding Command="Save" Executed="OnSave" />
+        <CommandBinding Command="Open" Executed="OnLoad" />
+        <CommandBinding Command="{x:Static local:MainWindow.ShowSettings}" Executed="OnShowSettings" />
+        <CommandBinding Command="{x:Static local:MainWindow.HideSettings}" Executed="OnHideSettings" />
+    </Window.CommandBindings>
+    
+    <Window.Background>
+        <ImageBrush Stretch="UniformToFill" ImageSource="Images\BackgroundLandscape.jpg"></ImageBrush>
+    </Window.Background>
+
+    <Grid x:Name="LayoutRoot">
+        <Image HorizontalAlignment="Left" VerticalAlignment="Top" Source="Images\Logo.png" Stretch="None" Margin="58,42,0,0"/>
+
+        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,42,53,0" Foreground="White" FontSize="20pt" FontFamily="Segoe UI" FontWeight="Light">Adaptive UI</TextBlock>
+
+        <k:KinectRegion x:Name="KinectRegion" KinectSensor="{Binding KinectSensor}">
+            <Grid>
+                <k:KinectUserViewer x:Name="FullScreenKinectUserViewer" />
+                <TextBlock x:Name="AttractTextBlock" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="100,10,100,10" Background="{StaticResource KinectPurpleBrush}" Foreground="White" FontSize="60" Text="Come closer to interact!" />
+                <local:UserTrackingControl KinectSensor="{Binding KinectSensor}" Settings="{Binding Settings}" SensorToScreenCoordinatesTransform="{Binding Path=SensorTransforms.SensorToScreenCoordinatesTransform}" UserDistance="{Binding UserDistance}" />
+                <local:DialPadControl KinectSensor="{Binding KinectSensor}" Settings="{Binding Settings}" SensorToScreenCoordinatesTransform="{Binding Path=SensorTransforms.SensorToScreenCoordinatesTransform}" UserDistance="{Binding UserDistance}" TimeoutWarning="{Binding TimeoutWarning}" />
+            </Grid>
+        </k:KinectRegion>
+
+        <Grid>
+            <Border HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,0,0,0" Height="143" Width="188" BorderThickness="10" SnapsToDevicePixels="True" Background="{StaticResource MainWindowZoneVisualizerBackgroundBrush}" BorderBrush="{StaticResource MainWindowZoneVisualizerBackgroundBrush}">
+                <local:AdaptiveZoneVisualizer x:Name="UserStateVisualizer" SensorToScreenPositionTransform="{Binding SensorTransforms.SensorToScreenPositionTransform}" FieldOfViewBrush="{StaticResource MainWindowZoneVisualizerFieldOfViewBrush}" KinectSensor="{Binding KinectSensor}" Settings="{Binding Settings}" SomethingNearSensor="{Binding SomethingNearSensor}" />
+            </Border>
+            <k:KinectSensorChooserUI HorizontalAlignment="Center" VerticalAlignment="Top" Name="SensorChooserUi" />
+            <Button x:Name="SettingsButton" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="45" Command="{x:Static local:MainWindow.ShowSettings}" Style="{StaticResource MouseTargetButtonStyle}">
+                <StackPanel>
+                    <TextBlock>
+                        <TextBlock.LayoutTransform>
+                            <TransformGroup>
+                                <RotateTransform Angle="270" />
+                            </TransformGroup>
+                        </TextBlock.LayoutTransform>
+                        Settings
+                    </TextBlock>
+                    <Image Source="Images\Settings-icon.png" Width="33" Height="33" Margin="0,10,0,0" HorizontalAlignment="Center"/>                    
+                </StackPanel>
+            </Button>
+            <local:SettingsControl x:Name="SettingsControl" HorizontalAlignment="Right" VerticalAlignment="Stretch" Settings="{Binding Path=Settings}" />
+            <local:ProjectedSkeletonVisualizer x:Name="ProjectedSkeletonVisualizer" KinectSensor="{Binding KinectSensor}" Settings="{Binding Settings}" SensorToScreenCoordinatesTransform="{Binding Path=SensorTransforms.SensorToScreenCoordinatesTransform}" />
+        </Grid>
+    </Grid>
+</Window>

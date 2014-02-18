@@ -34,6 +34,9 @@ namespace UserHeight
             this.sensorChooser.KinectChanged += SensorChooserKinectChanged;
 
             this.sensorChooser.Start();
+
+            //var bind = new Binding("Kinect") { Source = this.sensorChooseUi.KinectSensorChooser.Kinect; };
+            //BindingOperations.SetBinding(this.depthViewr, DependencyProperty, bind);
         }
 
         void SensorChooserKinectChanged(object sender, KinectChangedEventArgs e)
