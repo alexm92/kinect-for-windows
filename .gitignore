@@ -1,3 +1,6 @@
-# Ignore folders
+# Ignored Folders
 bin/
 obj/
+
+# Ignored Files
+*.suo
