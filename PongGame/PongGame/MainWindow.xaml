@@ -13,8 +13,10 @@
             <k:KinectSensorChooserUI x:Name="SensorChooserUi" Height="50" VerticalAlignment="Top" HorizontalAlignment="Center"/>
             <k:KinectUserViewer Height="50" HorizontalAlignment="Center" VerticalAlignment="Top" Width="100"/>
         </DockPanel>
-        <Canvas Grid.Row="1">
+        <Canvas x:Name="GameWindow" Grid.Row="1">
             <Rectangle x:Name="Player" Fill="#555555" Height="150" Width="10" Canvas.Left="5" Canvas.Top="68" />
+            <k:KinectUserViewer Height="100" Canvas.Left="239" Canvas.Top="132" Width="100"/>
         </Canvas>
+        <TextBlock x:Name="info" HorizontalAlignment="Left" Margin="337,75,0,0" Grid.Row="1" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/>
     </Grid>
 </Window>

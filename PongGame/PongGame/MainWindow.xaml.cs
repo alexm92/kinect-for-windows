@@ -2,6 +2,7 @@
 using Microsoft.Kinect.Toolkit;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,7 +46,8 @@ namespace PongGame
             {
                 try
                 {
-                    //oldSensor.DepthStream.Disable();
+                    oldSensor.ColorStream.Disable();
+                    oldSensor.DepthStream.Disable();
                     oldSensor.SkeletonFrameReady -= SkeletonFrameReady;
                     oldSensor.SkeletonStream.Disable();
                 }
@@ -60,6 +62,8 @@ namespace PongGame
             {
                 try
                 {
+                    newSensor.ColorStream.Enable(ColorImageFormat.RgbResolution640x480Fps30);
+                    newSensor.DepthStream.Enable(DepthImageFormat.Resolution640x480Fps30);
                     newSensor.SkeletonStream.Enable();
                     newSensor.SkeletonFrameReady += SkeletonFrameReady;
 
@@ -92,6 +96,7 @@ namespace PongGame
             {
                 if (skeletonFrame != null)
                 {
+                    this.info.Text = "Skeleton Ready";
                     skeletonFrame.CopySkeletonDataTo(skeletons);
                     var first = (from s in skeletons where s.TrackingState == SkeletonTrackingState.Tracked select s).FirstOrDefault();
                     Update(first);
@@ -103,9 +108,48 @@ namespace PongGame
         {
             if (skeleton != null)
             {
-                var handLeft = skeleton.Joints[JointType.HandLeft];
-                var handRight= skeleton.Joints[JointType.HandRight];
+                this.info.Text = "Update";
+
+                var elbowLeft = skeleton.Joints[JointType.ElbowLeft];
+                var handLeft = skeleton.Joints[JointType.WristLeft];
+                var elbowRight = skeleton.Joints[JointType.ElbowRight];
+                var handRight= skeleton.Joints[JointType.WristRight];
+
+                if (CheckHand(elbowRight, handRight))
+                {
+                    Move(handRight);
+                }
+                else if (CheckHand(elbowLeft, handLeft))
+                {
+                    Move(handLeft);
+                }
+                else
+                {
+                    Debug.Print("No hand is traked");
+                }
+                
             }
+        }
+
+        private void Move(Joint hand)
+        {
+            this.info.Text = "Move";
+            CoordinateMapper map = new CoordinateMapper(sensorChooser.Kinect);
+            ColorImagePoint p = map.MapSkeletonPointToColorPoint(hand.Position, ColorImageFormat.RgbResolution640x480Fps30);
+
+            double y = 1.0 * this.GameWindow.ActualHeight * p.Y / 480;
+            Debug.WriteLine(this.GameWindow.ActualHeight + " ~ " + p.Y + " => " + y);
+
+            Canvas.SetTop(this.Player, y);
+        }
+
+        bool CheckHand(Joint elbow, Joint hand)
+        {
+            // if hand and elbow joint are traked
+            // and hand is above the elbow, return true
+            return elbow.TrackingState == JointTrackingState.Tracked
+                && hand.TrackingState == JointTrackingState.Tracked 
+                && hand.Position.Y > elbow.Position.Y;
         }
     }
 }
