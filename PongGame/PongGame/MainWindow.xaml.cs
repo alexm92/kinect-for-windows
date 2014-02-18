@@ -23,6 +23,7 @@ namespace PongGame
     public partial class MainWindow : Window
     {
         internal readonly KinectSensorChooser sensorChooser;
+        Skeleton[] skeletons;
 
 
         public MainWindow()
@@ -42,9 +43,52 @@ namespace PongGame
 
             if (oldSensor != null)
             {
-                oldSensor.DepthStream.Disable();
-                oldSensor.SkeletonStream.Disable();
+                try
+                {
+                    //oldSensor.DepthStream.Disable();
+                    oldSensor.SkeletonFrameReady -= SkeletonFrameReady;
+                    oldSensor.SkeletonStream.Disable();
+                }
+                catch (InvalidOperationException)
+                {
+                    // KinectSensor might enter an invalid state while enabling/disabling streams or stream features.
+                    // E.g.: sensor might be abruptly unplugged.
+                }
             }
+
+            if (newSensor != null)
+            {
+                try
+                {
+                    newSensor.SkeletonStream.Enable();
+                    newSensor.SkeletonFrameReady += SkeletonFrameReady;
+
+                    if (skeletons == null)
+                    {
+                        skeletons = new Skeleton[newSensor.SkeletonStream.FrameSkeletonArrayLength];
+                    }
+
+                    try
+                    {
+                        newSensor.SkeletonStream.EnableTrackingInNearRange = true;
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        // Non Kinect for Windows devices do not support Near mode, so reset back to default mode.
+                        newSensor.SkeletonStream.EnableTrackingInNearRange = false;
+                    }
+                }
+                catch (InvalidOperationException)
+                {
+                    // KinectSensor might enter an invalid state while enabling/disabling streams or stream features.
+                    // E.g.: sensor might be abruptly unplugged.
+                }
+            }
+        }
+
+        private void SkeletonFrameReady(object sender, SkeletonFrameReadyEventArgs e)
+        {
+            
         }
     }
 }
