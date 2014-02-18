@@ -88,7 +88,24 @@ namespace PongGame
 
         private void SkeletonFrameReady(object sender, SkeletonFrameReadyEventArgs e)
         {
-            
+            using (var skeletonFrame = e.OpenSkeletonFrame())
+            {
+                if (skeletonFrame != null)
+                {
+                    skeletonFrame.CopySkeletonDataTo(skeletons);
+                    var first = (from s in skeletons where s.TrackingState == SkeletonTrackingState.Tracked select s).FirstOrDefault();
+                    Update(first);
+                }
+            }
+        }
+
+        private void Update(Skeleton skeleton)
+        {
+            if (skeleton != null)
+            {
+                var handLeft = skeleton.Joints[JointType.HandLeft];
+                var handRight= skeleton.Joints[JointType.HandRight];
+            }
         }
     }
 }
