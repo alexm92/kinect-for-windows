@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace PongGame
 {
@@ -26,6 +27,9 @@ namespace PongGame
         internal readonly KinectSensorChooser sensorChooser;
         Skeleton[] skeletons;
 
+        private byte[] colorPixels;
+        private WriteableBitmap colorBitmap;
+        private double ballX, ballY, incX, incY;
 
         public MainWindow()
         {
@@ -48,7 +52,7 @@ namespace PongGame
                 {
                     oldSensor.ColorStream.Disable();
                     oldSensor.DepthStream.Disable();
-                    oldSensor.SkeletonFrameReady -= SkeletonFrameReady;
+                    oldSensor.AllFramesReady -= AllFramesReady;
                     oldSensor.SkeletonStream.Disable();
                 }
                 catch (InvalidOperationException)
@@ -62,10 +66,38 @@ namespace PongGame
             {
                 try
                 {
+                    // Smoothed with some latency.
+                    // Filters out medium jitters.
+                    // Good for a menu system that needs to be smooth but
+                    // doesn't need the reduced latency as much as gesture recognition does.
+                    //TransformSmoothParameters smoothingParam = new TransformSmoothParameters();
+                    //{
+                    //    smoothingParam.Smoothing = 0.5f;
+                    //    smoothingParam.Correction = 0.1f;
+                    //    smoothingParam.Prediction = 0.5f;
+                    //    smoothingParam.JitterRadius = 0.1f;
+                    //    smoothingParam.MaxDeviationRadius = 0.1f;
+                    //};
+
+                    TransformSmoothParameters smoothingParam = new TransformSmoothParameters();
+                    {
+                        smoothingParam.Smoothing = 0.7f;
+                        smoothingParam.Correction = 0.3f;
+                        smoothingParam.Prediction = 1.0f;
+                        smoothingParam.JitterRadius = 1.0f;
+                        smoothingParam.MaxDeviationRadius = 1.0f;
+                    };
+
                     newSensor.ColorStream.Enable(ColorImageFormat.RgbResolution640x480Fps30);
                     newSensor.DepthStream.Enable(DepthImageFormat.Resolution640x480Fps30);
-                    newSensor.SkeletonStream.Enable();
-                    newSensor.SkeletonFrameReady += SkeletonFrameReady;
+                    newSensor.SkeletonStream.Enable(smoothingParam);
+                    newSensor.AllFramesReady += AllFramesReady;
+                    ballX = ballY = 0;
+                    incX = incY = 1;
+
+                    this.colorPixels = new byte[sensorChooser.Kinect.ColorStream.FramePixelDataLength];
+                    this.colorBitmap = new WriteableBitmap(sensorChooser.Kinect.ColorStream.FrameWidth, sensorChooser.Kinect.ColorStream.FrameHeight, 96.0, 96.0, PixelFormats.Bgr32, null);
+                    this.ColorImage.Source = this.colorBitmap;
 
                     if (skeletons == null)
                     {
@@ -81,6 +113,11 @@ namespace PongGame
                         // Non Kinect for Windows devices do not support Near mode, so reset back to default mode.
                         newSensor.SkeletonStream.EnableTrackingInNearRange = false;
                     }
+
+                    DispatcherTimer timer = new DispatcherTimer();
+                    timer.Interval = TimeSpan.FromMilliseconds(10);
+                    timer.Tick += timer_Tick;
+                    timer.Start();
                 }
                 catch (InvalidOperationException)
                 {
@@ -90,8 +127,26 @@ namespace PongGame
             }
         }
 
-        private void SkeletonFrameReady(object sender, SkeletonFrameReadyEventArgs e)
+        void timer_Tick(object sender, EventArgs e)
         {
+            Canvas.SetLeft(this.Ball, ballX + incX);
+            Canvas.SetTop(this.Ball, ballY + incY);
+        }
+
+        private void AllFramesReady(object sender, AllFramesReadyEventArgs e)
+        {
+            using (var colorFrame = e.OpenColorImageFrame())
+            {
+                if (colorFrame != null) {
+                    colorFrame.CopyPixelDataTo(colorPixels);
+
+                    this.colorBitmap.WritePixels(
+                        new Int32Rect(0, 0, this.colorBitmap.PixelWidth, this.colorBitmap.PixelHeight),
+                        this.colorPixels,
+                        this.colorBitmap.PixelWidth * sizeof(int),
+                        0);
+                }
+            }
             using (var skeletonFrame = e.OpenSkeletonFrame())
             {
                 if (skeletonFrame != null)
@@ -110,24 +165,16 @@ namespace PongGame
             {
                 this.info.Text = "Update";
 
-                var elbowLeft = skeleton.Joints[JointType.ElbowLeft];
-                var handLeft = skeleton.Joints[JointType.WristLeft];
-                var elbowRight = skeleton.Joints[JointType.ElbowRight];
-                var handRight= skeleton.Joints[JointType.WristRight];
+                var handRight = skeleton.Joints[JointType.HandRight];
 
-                if (CheckHand(elbowRight, handRight))
+                if (handRight.TrackingState == JointTrackingState.Tracked)
                 {
                     Move(handRight);
-                }
-                else if (CheckHand(elbowLeft, handLeft))
-                {
-                    Move(handLeft);
                 }
                 else
                 {
                     Debug.Print("No hand is traked");
                 }
-                
             }
         }
 
@@ -141,15 +188,9 @@ namespace PongGame
             Debug.WriteLine(this.GameWindow.ActualHeight + " ~ " + p.Y + " => " + y);
 
             Canvas.SetTop(this.Player, y);
-        }
 
-        bool CheckHand(Joint elbow, Joint hand)
-        {
-            // if hand and elbow joint are traked
-            // and hand is above the elbow, return true
-            return elbow.TrackingState == JointTrackingState.Tracked
-                && hand.TrackingState == JointTrackingState.Tracked 
-                && hand.Position.Y > elbow.Position.Y;
+            Canvas.SetLeft(this.MyCursor, p.X);
+            Canvas.SetTop(this.MyCursor, p.Y);
         }
     }
 }
