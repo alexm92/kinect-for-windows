@@ -17,6 +17,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
+using Coding4Fun.Kinect.Wpf;
+
 namespace PongGame
 {
     /// <summary>
@@ -30,6 +32,8 @@ namespace PongGame
         private byte[] colorPixels;
         private WriteableBitmap colorBitmap;
         private double ballX, ballY, incX, incY;
+
+        DispatcherTimer timer;
 
         public MainWindow()
         {
@@ -92,12 +96,12 @@ namespace PongGame
                     newSensor.DepthStream.Enable(DepthImageFormat.Resolution640x480Fps30);
                     newSensor.SkeletonStream.Enable(smoothingParam);
                     newSensor.AllFramesReady += AllFramesReady;
-                    ballX = ballY = 0;
-                    incX = incY = 1;
 
-                    this.colorPixels = new byte[sensorChooser.Kinect.ColorStream.FramePixelDataLength];
-                    this.colorBitmap = new WriteableBitmap(sensorChooser.Kinect.ColorStream.FrameWidth, sensorChooser.Kinect.ColorStream.FrameHeight, 96.0, 96.0, PixelFormats.Bgr32, null);
-                    this.ColorImage.Source = this.colorBitmap;
+                    incX = incY = ballX = ballY = -Int32.MaxValue;
+
+                    //this.colorPixels = new byte[sensorChooser.Kinect.ColorStream.FramePixelDataLength];
+                    //this.colorBitmap = new WriteableBitmap(sensorChooser.Kinect.ColorStream.FrameWidth, sensorChooser.Kinect.ColorStream.FrameHeight, 96.0, 96.0, PixelFormats.Bgr32, null);
+                    //this.ColorImage.Source = this.colorBitmap;
 
                     if (skeletons == null)
                     {
@@ -114,10 +118,9 @@ namespace PongGame
                         newSensor.SkeletonStream.EnableTrackingInNearRange = false;
                     }
 
-                    DispatcherTimer timer = new DispatcherTimer();
-                    timer.Interval = TimeSpan.FromMilliseconds(10);
+                    timer = new DispatcherTimer();
+                    timer.Interval = new TimeSpan(0, 0, 0, 0, 10);
                     timer.Tick += timer_Tick;
-                    timer.Start();
                 }
                 catch (InvalidOperationException)
                 {
@@ -129,29 +132,43 @@ namespace PongGame
 
         void timer_Tick(object sender, EventArgs e)
         {
-            Canvas.SetLeft(this.Ball, ballX + incX);
-            Canvas.SetTop(this.Ball, ballY + incY);
+            ballX = ballX + incX;
+            ballY = ballY + incY;
+            Canvas.SetLeft(this.Ball, ballX);
+            Canvas.SetTop(this.Ball, ballY);
+
+            CheckCollision();
         }
 
         private void AllFramesReady(object sender, AllFramesReadyEventArgs e)
         {
-            using (var colorFrame = e.OpenColorImageFrame())
-            {
-                if (colorFrame != null) {
-                    colorFrame.CopyPixelDataTo(colorPixels);
+            //using (var colorFrame = e.OpenColorImageFrame())
+            //{
+            //    if (colorFrame != null) {
+            //        colorFrame.CopyPixelDataTo(colorPixels);
 
-                    this.colorBitmap.WritePixels(
-                        new Int32Rect(0, 0, this.colorBitmap.PixelWidth, this.colorBitmap.PixelHeight),
-                        this.colorPixels,
-                        this.colorBitmap.PixelWidth * sizeof(int),
-                        0);
-                }
-            }
+            //        this.colorBitmap.WritePixels(
+            //            new Int32Rect(0, 0, this.colorBitmap.PixelWidth, this.colorBitmap.PixelHeight),
+            //            this.colorPixels,
+            //            this.colorBitmap.PixelWidth * sizeof(int),
+            //            0);
+            //    }
+            //}
+
             using (var skeletonFrame = e.OpenSkeletonFrame())
             {
                 if (skeletonFrame != null)
                 {
-                    this.info.Text = "Skeleton Ready";
+                    if (ballX == -Int32.MaxValue)
+                    {
+                        var r = new Random();
+                        incX = -1;
+                        incY = -1;
+                        ballX = (this.GameWindow.ActualWidth - this.Ball.ActualWidth) / 2;
+                        ballY = (this.GameWindow.ActualHeight - this.Ball.ActualHeight) / 2;
+                        timer.Start();
+                    }
+
                     skeletonFrame.CopySkeletonDataTo(skeletons);
                     var first = (from s in skeletons where s.TrackingState == SkeletonTrackingState.Tracked select s).FirstOrDefault();
                     Update(first);
@@ -163,8 +180,6 @@ namespace PongGame
         {
             if (skeleton != null)
             {
-                this.info.Text = "Update";
-
                 var handRight = skeleton.Joints[JointType.HandRight];
 
                 if (handRight.TrackingState == JointTrackingState.Tracked)
@@ -180,17 +195,28 @@ namespace PongGame
 
         private void Move(Joint hand)
         {
-            this.info.Text = "Move";
-            CoordinateMapper map = new CoordinateMapper(sensorChooser.Kinect);
-            ColorImagePoint p = map.MapSkeletonPointToColorPoint(hand.Position, ColorImageFormat.RgbResolution640x480Fps30);
+            //Debug.WriteLine(hand.Position.X + " <> " + hand.Position.Y);
+            hand = hand.ScaleTo((int)this.GameWindow.ActualWidth, (int)this.GameWindow.ActualHeight);
+            //Debug.WriteLine(hand.Position.X + " <> " + hand.Position.Y);
 
-            double y = 1.0 * this.GameWindow.ActualHeight * p.Y / 480;
-            Debug.WriteLine(this.GameWindow.ActualHeight + " ~ " + p.Y + " => " + y);
+            Canvas.SetTop(this.Player, hand.Position.Y - this.Player.ActualHeight / 2);
+        }
 
-            Canvas.SetTop(this.Player, y);
+        public void CheckCollision()
+        {
+            if (ballX == 0) incX = 1;
+            if (ballX == this.GameWindow.ActualHeight + this.Ball.ActualHeight) incX = -1;
+            if (ballY == 0) incY = 1;
+            if (ballY == this.GameWindow.ActualWidth + this.Ball.ActualWidth) incY = -1;
+            if (IntersectsWith(this.Player, this.Ball)) incY = 1;
+        }
 
-            Canvas.SetLeft(this.MyCursor, p.X);
-            Canvas.SetTop(this.MyCursor, p.Y);
+        public static bool IntersectsWith(FrameworkElement a, FrameworkElement b)
+        {
+            Rect rect1 = new Rect((double)a.GetValue(Canvas.LeftProperty), (double)a.GetValue(Canvas.TopProperty), a.Width, a.Height);
+            Rect rect2 = new Rect((double)b.GetValue(Canvas.LeftProperty), (double)b.GetValue(Canvas.TopProperty), b.Width, b.Height);
+
+            return rect1.IntersectsWith(rect2);
         }
     }
 }
