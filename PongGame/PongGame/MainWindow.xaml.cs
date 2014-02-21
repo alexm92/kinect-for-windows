@@ -96,6 +96,7 @@ namespace PongGame
 
                     newSensor.ColorStream.Enable(ColorImageFormat.RgbResolution640x480Fps30);
                     newSensor.DepthStream.Enable(DepthImageFormat.Resolution640x480Fps30);
+                    //newSensor.SkeletonStream.Enable();
                     newSensor.SkeletonStream.Enable(smoothingParam);
                     newSensor.AllFramesReady += AllFramesReady;
 
