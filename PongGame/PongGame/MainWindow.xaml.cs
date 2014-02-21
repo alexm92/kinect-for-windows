@@ -29,11 +29,10 @@ namespace PongGame
         internal readonly KinectSensorChooser sensorChooser;
         Skeleton[] skeletons;
 
-        private byte[] colorPixels;
-        private WriteableBitmap colorBitmap;
-        private double ballX, ballY, incX, incY;
-
-        DispatcherTimer timer;
+        public double ballLeft, ballTop, incLeft, incTop;
+        public double speed;
+        public int intervalMilisec;
+        public DispatcherTimer timer;
 
         public MainWindow()
         {
@@ -43,6 +42,9 @@ namespace PongGame
             SensorChooserUi.KinectSensorChooser = sensorChooser;
             SensorChooserUi.KinectSensorChooser.KinectChanged += SensorChooserKinectChanged;
             sensorChooser.Start();
+
+            intervalMilisec = 5;
+            speed = 2;
         }
 
         private void SensorChooserKinectChanged(object sender, KinectChangedEventArgs e)
@@ -97,11 +99,7 @@ namespace PongGame
                     newSensor.SkeletonStream.Enable(smoothingParam);
                     newSensor.AllFramesReady += AllFramesReady;
 
-                    incX = incY = ballX = ballY = -Int32.MaxValue;
-
-                    //this.colorPixels = new byte[sensorChooser.Kinect.ColorStream.FramePixelDataLength];
-                    //this.colorBitmap = new WriteableBitmap(sensorChooser.Kinect.ColorStream.FrameWidth, sensorChooser.Kinect.ColorStream.FrameHeight, 96.0, 96.0, PixelFormats.Bgr32, null);
-                    //this.ColorImage.Source = this.colorBitmap;
+                    incLeft = incTop = ballLeft = ballTop = -Int32.MaxValue;
 
                     if (skeletons == null)
                     {
@@ -119,7 +117,7 @@ namespace PongGame
                     }
 
                     timer = new DispatcherTimer();
-                    timer.Interval = new TimeSpan(0, 0, 0, 0, 10);
+                    timer.Interval = new TimeSpan(0, 0, 0, 0, intervalMilisec);
                     timer.Tick += timer_Tick;
                 }
                 catch (InvalidOperationException)
@@ -132,40 +130,27 @@ namespace PongGame
 
         void timer_Tick(object sender, EventArgs e)
         {
-            ballX = ballX + incX;
-            ballY = ballY + incY;
-            Canvas.SetLeft(this.Ball, ballX);
-            Canvas.SetTop(this.Ball, ballY);
+            ballLeft = ballLeft + incLeft;
+            ballTop = ballTop + incTop;
+            Canvas.SetLeft(this.Ball, ballLeft);
+            Canvas.SetTop(this.Ball, ballTop);
 
             CheckCollision();
         }
 
         private void AllFramesReady(object sender, AllFramesReadyEventArgs e)
         {
-            //using (var colorFrame = e.OpenColorImageFrame())
-            //{
-            //    if (colorFrame != null) {
-            //        colorFrame.CopyPixelDataTo(colorPixels);
-
-            //        this.colorBitmap.WritePixels(
-            //            new Int32Rect(0, 0, this.colorBitmap.PixelWidth, this.colorBitmap.PixelHeight),
-            //            this.colorPixels,
-            //            this.colorBitmap.PixelWidth * sizeof(int),
-            //            0);
-            //    }
-            //}
-
             using (var skeletonFrame = e.OpenSkeletonFrame())
             {
                 if (skeletonFrame != null)
                 {
-                    if (ballX == -Int32.MaxValue)
+                    if (ballLeft == -Int32.MaxValue)
                     {
                         var r = new Random();
-                        incX = -1;
-                        incY = -1;
-                        ballX = (this.GameWindow.ActualWidth - this.Ball.ActualWidth) / 2;
-                        ballY = (this.GameWindow.ActualHeight - this.Ball.ActualHeight) / 2;
+                        incLeft = -speed;
+                        incTop = -speed;
+                        ballLeft = (this.GameWindow.ActualWidth - this.Ball.ActualWidth) / 2;
+                        ballTop = (this.GameWindow.ActualHeight - this.Ball.ActualHeight) / 2;
                         timer.Start();
                     }
 
@@ -200,23 +185,35 @@ namespace PongGame
             //Debug.WriteLine(hand.Position.X + " <> " + hand.Position.Y);
 
             Canvas.SetTop(this.Player, hand.Position.Y - this.Player.ActualHeight / 2);
+            Canvas.SetTop(this.Computer, hand.Position.Y - this.Computer.ActualHeight / 2);
         }
 
         public void CheckCollision()
         {
-            if (ballX == 0) incX = 1;
-            if (ballX == this.GameWindow.ActualHeight + this.Ball.ActualHeight) incX = -1;
-            if (ballY == 0) incY = 1;
-            if (ballY == this.GameWindow.ActualWidth + this.Ball.ActualWidth) incY = -1;
-            if (IntersectsWith(this.Player, this.Ball)) incY = 1;
+            if (ballLeft <= 0)
+            {
+                incLeft = speed;
+                this.ScoreComputer.Text = (Convert.ToInt32(this.ScoreComputer.Text) + 1) + "";
+            }
+            if (ballLeft + this.Ball.ActualWidth >= this.GameWindow.ActualWidth)
+            {
+                incLeft = -speed;
+                this.ScorePlayer.Text = (Convert.ToInt32(this.ScorePlayer.Text) + 1) + "";
+            }
+            if (ballTop <= 0) incTop = speed;
+            if (ballTop + this.Ball.ActualHeight >= this.GameWindow.ActualHeight) incTop = -speed;
+
+            // check player and computer rect
+            if (Intersect(this.Player, this.Ball)) incLeft = speed;
+            if (Intersect(this.Computer, this.Ball)) incLeft = -speed;
         }
 
-        public static bool IntersectsWith(FrameworkElement a, FrameworkElement b)
+        public bool Intersect(FrameworkElement a, FrameworkElement b)
         {
-            Rect rect1 = new Rect((double)a.GetValue(Canvas.LeftProperty), (double)a.GetValue(Canvas.TopProperty), a.Width, a.Height);
-            Rect rect2 = new Rect((double)b.GetValue(Canvas.LeftProperty), (double)b.GetValue(Canvas.TopProperty), b.Width, b.Height);
+            Rect ra = new Rect((double)a.GetValue(Canvas.LeftProperty), (double)a.GetValue(Canvas.TopProperty), a.Width, a.Height);
+            Rect rb = new Rect((double)b.GetValue(Canvas.LeftProperty), (double)b.GetValue(Canvas.TopProperty), b.Width, b.Height);
 
-            return rect1.IntersectsWith(rect2);
+            return ra.IntersectsWith(rb);
         }
     }
 }
