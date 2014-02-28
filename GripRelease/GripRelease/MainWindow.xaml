@@ -1,0 +1,23 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:k="http://schemas.microsoft.com/kinect/2013" x:Class="WpfApplication1.MainWindow"
+        Title="MainWindow" Height="350" Width="525" WindowState="Maximized">
+    <Grid>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        
+        <DockPanel Grid.Row="0">
+            <k:KinectSensorChooserUI x:Name="sensorChooserUi" Grid.Row="0" HorizontalAlignment="Center"  VerticalAlignment="Top"/>
+            <k:KinectUserViewer k:KinectRegion.KinectRegion="{Binding ElementName=kinectRegion}" Height="50" HorizontalAlignment="Center" VerticalAlignment="Top" />
+        </DockPanel>
+        <k:KinectRegion x:Name="kinectRegion" Grid.Row="1">
+            <!--<k:KinectScrollViewer HorizontalAlignment="Left" Height="269" VerticalAlignment="Top" Width="517"/>-->
+            <Grid x:Name="kGrid"></Grid>
+        </k:KinectRegion>
+
+    </Grid>
+</Window>
