@@ -2,22 +2,23 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:k="http://schemas.microsoft.com/kinect/2013" x:Class="WpfApplication1.MainWindow"
-        Title="MainWindow" Height="350" Width="525" WindowState="Maximized">
+        Title="MainWindow" Height="600" Width="1000" WindowState="Maximized">
     <Grid>
-        
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
-        
-        <DockPanel Grid.Row="0">
-            <k:KinectSensorChooserUI x:Name="sensorChooserUi" Grid.Row="0" HorizontalAlignment="Center"  VerticalAlignment="Top"/>
-            <k:KinectUserViewer k:KinectRegion.KinectRegion="{Binding ElementName=kinectRegion}" Height="50" HorizontalAlignment="Center" VerticalAlignment="Top" />
-        </DockPanel>
-        <k:KinectRegion x:Name="kinectRegion" Grid.Row="1">
-            <!--<k:KinectScrollViewer HorizontalAlignment="Left" Height="269" VerticalAlignment="Top" Width="517"/>-->
-            <Grid x:Name="kGrid"></Grid>
-        </k:KinectRegion>
+
+        <k:KinectSensorChooserUI x:Name="sensorChooserUi" HorizontalAlignment="Center"  VerticalAlignment="Top" Margin="0,0,952,0"/>
+
+        <Canvas Grid.Row="1">
+            <Image x:Name="Cover" Source="happy_footer.png" Stretch="Uniform" Canvas.Bottom="0" Canvas.Left="0" Width="2500"/>
+            <Image x:Name="rocketMan" Source="rocketman.gif" Stretch="Uniform" HorizontalAlignment="Left" Height="100" Margin="10,300,0,0" VerticalAlignment="Top" Width="100"/>
+            <Path x:Name="rocketManPath" Stroke="Green" Fill="#4CFF0000" Data="M 5,400 L 15,305 L 80,295 L 50,400 Z" Canvas.Left="0" />
+            <Path x:Name="Building1" Stroke="Green" Fill="#4CFF0000" Data="M 365,518 L 365,425 L 655,425 L 655,518 Z" />
+            <Path x:Name="Building2" Stroke="Green" Fill="#4CFF0000" Data="M 735,528 L 735,248 L 778,218 L 925,218 L 925,528 Z" />
+        </Canvas>
 
     </Grid>
 </Window>
