@@ -23,7 +23,7 @@ namespace Balloon
         /// <summary>
         /// Contains a list of the currently displayed buildings and their size after scale
         /// </summary>
-        List<Tuple<BitmapFrame, Size>> _buildingImages;
+        List<MyTuple<BitmapFrame, Rect>> _buildingImages;
 
         const double _scale = 0.7;
         const double _speed = 3;
@@ -37,11 +37,10 @@ namespace Balloon
         {
             // init
             _buildingsList = new VisualCollection(this);
-            _buildingImages = new List<Tuple<BitmapFrame, Size>>();
+            _buildingImages = new List<MyTuple<BitmapFrame, Rect>>();
             _currentWidth = 0;
             _leftStartMargin = 0;
             _rand = new Random();
-
 
             _timer = new DispatcherTimer();
             _timer.Interval = new TimeSpan(0, 0, 0, 0, 33);
@@ -110,14 +109,14 @@ namespace Balloon
             int width, height, index;
 
             // remove the first building if it goes out of the screen
-            if (_buildingImages.Count > 0 && _leftStartMargin + _buildingImages[0].Item2.Width <= 0)
+            if (_buildingImages.Count > 0 && _leftStartMargin + _buildingImages[0].Second.Width <= 0)
             {
-                _currentWidth -= _buildingImages[0].Item2.Width;
+                _currentWidth -= _buildingImages[0].Second.Width;
                 _leftStartMargin = 0;
                 _buildingImages.RemoveAt(0);
             }
 
-            // add buoldings if we can
+            // add buildings if we can
             while (_currentWidth <= this.ActualWidth + 200)
             {
                 index = _rand.Next(1, 4);
@@ -127,11 +126,14 @@ namespace Balloon
                 height = (int)(image.PixelHeight * _scale);
                 _currentWidth += width;
 
-                _buildingImages.Add(new Tuple<BitmapFrame, Size>(image, new Size(width, height)));
+                ////////////////////////////
+                ///////////////////////////////////////updateeeeeeeeeeeeeee
+                ////////////////////////////
+                _buildingImages.Add(new MyTuple<BitmapFrame, Rect>(image, new Rect(0, 0, width, height)));
 
-                Debug.WriteLine(this.ActualWidth);
-                Debug.WriteLine(_currentWidth);
-                Debug.WriteLine(_buildingImages.Count);
+                //Debug.WriteLine(this.ActualWidth);
+                //Debug.WriteLine(_currentWidth);
+                //Debug.WriteLine(_buildingImages.Count);
             }
         }
 
@@ -149,8 +151,8 @@ namespace Balloon
                     for (int i = 0; i < _buildingImages.Count; i++)
                     {
                         var obj = _buildingImages[i];
-                        context.DrawImage(obj.Item1, new Rect(currentLeftMargin, this.ActualHeight - obj.Item2.Height, obj.Item2.Width, obj.Item2.Height));
-                        currentLeftMargin += obj.Item2.Width;
+                        context.DrawImage(obj.First, new Rect(currentLeftMargin, this.ActualHeight - obj.Second.Height, obj.Second.Width, obj.Second.Height));
+                        currentLeftMargin += obj.Second.Width;
                     }
                 }
                 _buildingsList.Clear();

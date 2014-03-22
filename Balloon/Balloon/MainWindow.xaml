@@ -4,14 +4,8 @@
         xmlns:local="clr-namespace:Balloon"
         Title="MainWindow" Height="800" Width="1280" WindowState="Maximized">
     <Grid Background="#FF1D1E30">
+        <Canvas x:Name="buildingsOverlay" />
         <local:City x:Name="myCity" IsEnabled="False" />
-        <Canvas>
-            <Polygon Points="0,0 0,-178 10,-178 10,-226 15,-226 15,-244 35,-265 35,-296 39,-296 39,-265 60,-245 60,-226 66,-226 66,-178 75,-178 75,0" Stroke="Green" StrokeThickness="3" Canvas.Left="137" Canvas.Top="767">
-                <Polygon.Fill>
-                    <SolidColorBrush Color="Red" Opacity="0.5"/>
-                </Polygon.Fill>
-            </Polygon>
-        </Canvas>
-        <Image Source="D:\GitHub\kinect-for-windows\Balloon\Balloon\Resources\balloon.png" Width="100" HorizontalAlignment="Left" Margin="50, 0, 0, 0"/>
+        <Image x:Name="PlayerBalloon" Source="D:\GitHub\kinect-for-windows\Balloon\Balloon\Resources\balloon.png" Width="100" HorizontalAlignment="Left" Margin="50, 0, 0, 0"/>
     </Grid>
 </Window>
