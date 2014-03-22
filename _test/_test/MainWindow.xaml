@@ -1,0 +1,14 @@
+﻿<Window x:Class="_test.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:_test"
+        Title="MainWindow" Height="350" Width="525" Loaded="Window_Loaded_1" WindowState="Maximized" MouseDown="Window_MouseDown_1">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        
+        <local:City Height="300" VerticalAlignment="Bottom" />
+        <!--<StackPanel x:Name="panel_city" Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" />-->
+    </Grid>
+</Window>
