@@ -1,7 +1,6 @@
 # Ignored Folders
 bin/
 obj/
-.Debug/
 
 # Ignored Files
 *.suo
