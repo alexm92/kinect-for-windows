@@ -102,11 +102,11 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Kinect\Samples\Microsoft.Kinect.Toolkit.Controls\Microsoft.Kinect.Toolkit.Controls.csproj">
+    <ProjectReference Include="..\..\Samples\Microsoft.Kinect.Toolkit.Controls\Microsoft.Kinect.Toolkit.Controls.csproj">
       <Project>{4508c4d1-85bb-4f3f-9e3b-cc93d231c65d}</Project>
       <Name>Microsoft.Kinect.Toolkit.Controls</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Kinect\Samples\Microsoft.Kinect.Toolkit\Microsoft.Kinect.Toolkit.csproj">
+    <ProjectReference Include="..\..\Samples\Microsoft.Kinect.Toolkit\Microsoft.Kinect.Toolkit.csproj">
       <Project>{c6f9c31b-6130-4443-a5cc-ef0664552ecd}</Project>
       <Name>Microsoft.Kinect.Toolkit</Name>
     </ProjectReference>
