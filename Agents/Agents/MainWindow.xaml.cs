@@ -28,7 +28,8 @@ namespace Agents
     public partial class MainWindow : Window
     {
         KinectSensorChooser sensorChooser;
-        ObservableCollection<Agent> agents = new ObservableCollection<Agent>();
+        ObservableCollection<Agent> _agents = new ObservableCollection<Agent>();
+        ObservableCollection<Agent> _selectedAgents = new ObservableCollection<Agent>();
 
         public MainWindow()
         {
@@ -46,11 +47,21 @@ namespace Agents
 
             // Bind the sensor chooser's current sensor to the KinectRegion
             var regionSensorBinding = new Binding("Kinect") { Source = this.sensorChooser };
-            BindingOperations.SetBinding(this.kinectRegion, KinectRegion.KinectSensorProperty, regionSensorBinding);
+            BindingOperations.SetBinding(this.kinectRegionAgents, KinectRegion.KinectSensorProperty, regionSensorBinding);
+            BindingOperations.SetBinding(this.kinectRegionAgentDetails, KinectRegion.KinectSensorProperty, regionSensorBinding);
 
             LoadData();
+
+            // hide panels
+            this.kinectRegionAgents.Visibility = Visibility.Visible;
+            this.kinectRegionAgentDetails.Visibility = Visibility.Collapsed;
         }
 
+        /// <summary>
+        /// Sensor Chooser status changed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private void SensorChooserOnKinectChanged(object sender, KinectChangedEventArgs args)
         {
             if (args.OldSensor != null)
@@ -96,6 +107,9 @@ namespace Agents
             }
         }
 
+        /// <summary>
+        /// Loads agents from json file
+        /// </summary>
         void LoadData()
         {
             string json = File.ReadAllText("JData/agents.json");
@@ -103,13 +117,46 @@ namespace Agents
 
             foreach (var agent in agents_list)
             {
-                agents.Add(agent);
+                _agents.Add(agent);
             }
         }
 
         public ObservableCollection<Agent> Agents
         {
-            get { return agents; }
+            get { return _agents; }
+        }
+
+        public ObservableCollection<Agent> SelectedAgents
+        {
+            get { return _selectedAgents; }
+        }
+
+        private void AgentClick(object sender, RoutedEventArgs e)
+        {
+            KinectTileButton btn = sender as KinectTileButton;
+
+            if (btn != null) {
+                Agent agent = btn.Tag as Agent;
+                if (agent != null)
+                {
+                    _selectedAgents.Clear();
+                    _selectedAgents.Add(agent);
+
+                    this.kinectRegionAgents.Visibility = Visibility.Collapsed;
+                    this.kinectRegionAgentDetails.Visibility = Visibility.Visible;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Show agents page
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ShowHomePage(object sender, RoutedEventArgs e)
+        {
+            this.kinectRegionAgents.Visibility = Visibility.Visible;
+            this.kinectRegionAgentDetails.Visibility = Visibility.Collapsed;
         }
 
     }
