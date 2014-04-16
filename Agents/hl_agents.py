@@ -69,7 +69,7 @@ def get_agent_info(url):
     if description_start != -1:
         description_start = html.find('<div class="field-item even" property="content:encoded">', description_start) + len('<div class="field-item even" property="content:encoded">')
         description_end = html.find('</div>', description_start)
-        agent['description'] = html[description_start : description_end]
+        agent['description'] = html[description_start : description_end].replace('<p>', '').replace('</p>', '\n').replace('<br />', '\n')
 
     agent['languages'] = []
     lang_start = html.find('<div class="bio_lang">')
@@ -102,11 +102,19 @@ def get_agent_info(url):
 
     return agent
 
+def export_to_json(filename, data):
+    f = open(filename, 'w')
+    jdata = json.dumps(data)
+    f.write(jdata)
+    f.close()
+
 if __name__ == '__main__':
     url_list = get_agents_url()
     agents = []
     for url in url_list:
+        print 'Parsing', url
         agent = get_agent_info(url)
         agents.append(agent)
 
-    print agents
+    export_to_json('agents.json', agents)
+    print 'Done!!'
