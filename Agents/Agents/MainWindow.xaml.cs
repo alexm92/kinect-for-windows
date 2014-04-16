@@ -47,14 +47,13 @@ namespace Agents
 
             // Bind the sensor chooser's current sensor to the KinectRegion
             var regionSensorBinding = new Binding("Kinect") { Source = this.sensorChooser };
-            BindingOperations.SetBinding(this.kinectRegionAgents, KinectRegion.KinectSensorProperty, regionSensorBinding);
-            BindingOperations.SetBinding(this.kinectRegionAgentDetails, KinectRegion.KinectSensorProperty, regionSensorBinding);
+            BindingOperations.SetBinding(this.kinectRegion, KinectRegion.KinectSensorProperty, regionSensorBinding);
 
             LoadData();
 
             // hide panels
-            this.kinectRegionAgents.Visibility = Visibility.Visible;
-            this.kinectRegionAgentDetails.Visibility = Visibility.Collapsed;
+            this.gridAgents.Visibility = Visibility.Visible;
+            this.gridAgentDetails.Visibility = Visibility.Collapsed;
         }
 
         /// <summary>
@@ -142,8 +141,8 @@ namespace Agents
                     _selectedAgents.Clear();
                     _selectedAgents.Add(agent);
 
-                    this.kinectRegionAgents.Visibility = Visibility.Collapsed;
-                    this.kinectRegionAgentDetails.Visibility = Visibility.Visible;
+                    this.gridAgents.Visibility = Visibility.Collapsed;
+                    this.gridAgentDetails.Visibility = Visibility.Visible;
                 }
             }
         }
@@ -155,8 +154,8 @@ namespace Agents
         /// <param name="e"></param>
         private void ShowHomePage(object sender, RoutedEventArgs e)
         {
-            this.kinectRegionAgents.Visibility = Visibility.Visible;
-            this.kinectRegionAgentDetails.Visibility = Visibility.Collapsed;
+            this.gridAgents.Visibility = Visibility.Visible;
+            this.gridAgentDetails.Visibility = Visibility.Collapsed;
         }
 
     }
