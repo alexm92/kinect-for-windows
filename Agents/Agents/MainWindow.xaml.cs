@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -111,7 +112,7 @@ namespace Agents
         /// </summary>
         void LoadData()
         {
-            string json = File.ReadAllText("JData/agents.json");
+            string json = File.ReadAllText(@"JData/agents.json");
             var agents_list = JsonConvert.DeserializeObject<ObservableCollection<Agent>>(json);
 
             foreach (var agent in agents_list)
