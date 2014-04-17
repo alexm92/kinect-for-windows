@@ -7,8 +7,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,7 +27,7 @@ namespace Agents
     /// </summary>
     public partial class MainWindow : Window
     {
-        KinectSensorChooser sensorChooser;
+        KinectSensorChooser _sensorChooser;
         ObservableCollection<Agent> _agents = new ObservableCollection<Agent>();
         ObservableCollection<Agent> _selectedAgents = new ObservableCollection<Agent>();
 
@@ -40,20 +40,18 @@ namespace Agents
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             // initialize the sensor chooser and UI
-            this.sensorChooser = new KinectSensorChooser();
-            this.sensorChooser.KinectChanged += SensorChooserOnKinectChanged;
-            this.sensorChooserUi.KinectSensorChooser = this.sensorChooser;
-            this.sensorChooser.Start();
+            this._sensorChooser = new KinectSensorChooser();
+            this._sensorChooser.KinectChanged += SensorChooserOnKinectChanged;
+            this.sensorChooserUi.KinectSensorChooser = this._sensorChooser;
+            this._sensorChooser.Start();
 
             // Bind the sensor chooser's current sensor to the KinectRegion
-            var regionSensorBinding = new Binding("Kinect") { Source = this.sensorChooser };
+            var regionSensorBinding = new Binding("Kinect") { Source = this._sensorChooser };
             BindingOperations.SetBinding(this.kinectRegion, KinectRegion.KinectSensorProperty, regionSensorBinding);
 
+            // load data and navigate to agents page
             LoadData();
-
-            // hide panels
-            this.gridAgents.Visibility = Visibility.Visible;
-            this.gridAgentDetails.Visibility = Visibility.Collapsed;
+            NavigateToAgents();
         }
 
         /// <summary>
@@ -111,7 +109,7 @@ namespace Agents
         /// </summary>
         void LoadData()
         {
-            string json = File.ReadAllText("JData/agents.json");
+            string json = File.ReadAllText("Data/agents.json");
             var agents_list = JsonConvert.DeserializeObject<ObservableCollection<Agent>>(json);
 
             foreach (var agent in agents_list)
@@ -120,33 +118,39 @@ namespace Agents
             }
         }
 
+        /// <summary>
+        /// Observable collection, return a list of agents
+        /// </summary>
         public ObservableCollection<Agent> Agents
         {
             get { return _agents; }
         }
 
+        /// <summary>
+        /// Observable collection, returns a list of selected agents.
+        /// Not more than 1 !!!
+        /// </summary>
         public ObservableCollection<Agent> SelectedAgents
         {
             get { return _selectedAgents; }
         }
 
+        /// <summary>
+        /// Agent click event => go to agent details.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AgentClick(object sender, RoutedEventArgs e)
         {
             KinectTileButton btn = sender as KinectTileButton;
 
             if (btn != null) {
                 Agent agent = btn.Tag as Agent;
-                if (agent != null)
-                {
-                    _selectedAgents.Clear();
-                    _selectedAgents.Add(agent);
-
-                    this.gridAgents.Visibility = Visibility.Collapsed;
-                    this.gridAgentDetails.Visibility = Visibility.Visible;
-                }
+                NavigateToAgentDetails(agent);
             }
         }
 
+        #region Navigation
         /// <summary>
         /// Show agents page
         /// </summary>
@@ -154,9 +158,35 @@ namespace Agents
         /// <param name="e"></param>
         private void ShowHomePage(object sender, RoutedEventArgs e)
         {
+            NavigateToAgents();
+        }
+
+        /// <summary>
+        /// Navigate to agents list.
+        /// </summary>
+        private void NavigateToAgents()
+        {
             this.gridAgents.Visibility = Visibility.Visible;
             this.gridAgentDetails.Visibility = Visibility.Collapsed;
         }
+
+        /// <summary>
+        /// Navigate to agent details page
+        /// </summary>
+        /// <param name="agent"></param>
+        private void NavigateToAgentDetails(Agent agent)
+        {
+            if (agent != null)
+            {
+                _selectedAgents.Clear();
+                _selectedAgents.Add(agent);
+
+                this.gridAgents.Visibility = Visibility.Collapsed;
+                this.gridAgentDetails.Visibility = Visibility.Visible;
+            }
+        }
+
+        #endregion
 
     }
 }
