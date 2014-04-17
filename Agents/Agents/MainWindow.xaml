@@ -14,11 +14,30 @@
 
             <!-- header -->
             <Grid Grid.Row="0" Margin="105 0 105 0">
-                <k:KinectTileButton Click="ShowHomePage" HorizontalAlignment="Left" VerticalAlignment="Center" Width="100" Height="100" Background="White">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                
+                <k:KinectTileButton Grid.Column="0" Click="ShowHomePage" HorizontalAlignment="Left" VerticalAlignment="Center" Width="100" Height="100" Background="White">
                     <Image Source="pack://application:,,,/Images/highline.png" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </k:KinectTileButton>
-                <k:KinectUserViewer k:KinectRegion.KinectRegion="{Binding ElementName=kinectRegion}" Height="100" HorizontalAlignment="Center" VerticalAlignment="Top" />
-                <k:KinectSensorChooserUI HorizontalAlignment="Center" VerticalAlignment="Top" Name="sensorChooserUi" />
+
+                <k:KinectTileButton x:Name="menuListings" Click="NavigateToListings" Label="" Height="100" Width="Auto" Background="White" BorderThickness="0" Grid.Column="1">
+                    <TextBlock Text="Listings" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </k:KinectTileButton>
+                <k:KinectTileButton x:Name="menuAgents" Click="NavigateToAgents" Label="" Height="100" Width="Auto" Background="White" BorderThickness="0" Grid.Column="2">
+                    <TextBlock Text="Agents" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </k:KinectTileButton>
+                <k:KinectTileButton x:Name="menuGames" Click="NavigateToGames" Label="" Height="100" Width="Auto" Background="White" BorderThickness="0" Grid.Column="3">
+                    <TextBlock Text="Games" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </k:KinectTileButton>
+
+                <k:KinectUserViewer Grid.Column="4" k:KinectRegion.KinectRegion="{Binding ElementName=kinectRegion}" Height="100" HorizontalAlignment="Center" VerticalAlignment="Top" />
+                <k:KinectSensorChooserUI Grid.Column="4" HorizontalAlignment="Center" VerticalAlignment="Top" Name="sensorChooserUi" />
             </Grid>
 
             <!-- Agents List -->

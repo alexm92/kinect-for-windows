@@ -52,7 +52,7 @@ namespace Agents
 
             // load data and navigate to agents page
             LoadData();
-            NavigateToAgents();
+            NavigateToAgents(null, null);
         }
 
         /// <summary>
@@ -159,14 +159,50 @@ namespace Agents
         /// <param name="e"></param>
         private void ShowHomePage(object sender, RoutedEventArgs e)
         {
-            NavigateToAgents();
+            NavigateToAgents(sender, e);
+        }
+
+        /// <summary>
+        /// Navigate to listings (sales or rentals).
+        /// </summary>
+        private void NavigateToListings(object sender, RoutedEventArgs e)
+        {
+            // menu items
+            this.menuListings.Background = Brushes.WhiteSmoke;
+            this.menuAgents.Background = Brushes.White;
+            this.menuGames.Background = Brushes.White;
+
+            /// grids
+            // this.gridAgents.Visibility = Visibility.Visible;
+            // this.gridAgentDetails.Visibility = Visibility.Collapsed;
+        }
+
+        /// <summary>
+        /// Navigate to games.
+        /// </summary>
+        private void NavigateToGames(object sender, RoutedEventArgs e)
+        {
+            // menu items
+            this.menuListings.Background = Brushes.White;
+            this.menuAgents.Background = Brushes.White;
+            this.menuGames.Background = Brushes.WhiteSmoke;
+
+            /// grids
+            // this.gridAgents.Visibility = Visibility.Visible;
+            // this.gridAgentDetails.Visibility = Visibility.Collapsed;
         }
 
         /// <summary>
         /// Navigate to agents list.
         /// </summary>
-        private void NavigateToAgents()
+        private void NavigateToAgents(object sender, RoutedEventArgs e)
         {
+            // menu items
+            this.menuListings.Background = Brushes.White;
+            this.menuAgents.Background = Brushes.WhiteSmoke;
+            this.menuGames.Background = Brushes.White;
+
+            // grids
             this.gridAgents.Visibility = Visibility.Visible;
             this.gridAgentDetails.Visibility = Visibility.Collapsed;
         }
@@ -182,6 +218,7 @@ namespace Agents
                 _selectedAgents.Clear();
                 _selectedAgents.Add(agent);
 
+                // grids
                 this.gridAgents.Visibility = Visibility.Collapsed;
                 this.gridAgentDetails.Visibility = Visibility.Visible;
             }
