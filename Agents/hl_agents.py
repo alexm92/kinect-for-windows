@@ -6,8 +6,8 @@ domain = 'http://hlresidential.com'
 def get_agents_url():
     agents_url = []
     html = urllib2.urlopen('%s/agents' % domain).read()
+    
     agent_start = html.find('views-field-field-b-photo')
-
     while agent_start != -1:
         agent_start = html.find('<a href="', agent_start) + len('<a href="')
         agent_end = html.find('"', agent_start)
