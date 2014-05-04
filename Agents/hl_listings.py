@@ -1,6 +1,7 @@
 from BeautifulSoup import BeautifulSoup
 import urllib2
 import json
+import pprint
 
 domain = 'http://hlresidential.com'
 VALID_TAGS = ['br']
@@ -13,9 +14,24 @@ def sanitize_html(value):
     return soup.renderContents()
 
 def get_listings_url():
-    listings_url = []
-    html = urllib2.urlopen('%s/sales-grid?id=&price[min]=&price[max]=&bed=&bed_max=&bath=All&items_per_page=200' % domain).read()
+    listings_url = set()
+    
+    ## sales
+    url = '%s/sales-grid?id=&price[min]=&price[max]=&bed=&bed_max=&bath=All&items_per_page=200' % domain
+    urls = _get_urls(url)
+    listings_url.update(urls)
+    
+    ## rentals
+    for page in xrange(0, 15):
+        url = '%s/rental-grid?id=&price[min]=&price[max]=&bed=&bed_max=&bath=All&&&&items_per_page=200&page=%s' % (domain, page)
+        urls = _get_urls(url)
+        listings_url.update(urls)
 
+    return listings_url
+
+def _get_urls(url):
+    urls = set()
+    html = urllib2.urlopen(url).read()
     listing_start = html.find('<td')
     listing_start = html.find('<div class="field-content">', listing_start)
     while listing_start != -1:
@@ -23,18 +39,15 @@ def get_listings_url():
         url_end = html.find('"', url_start)
         url = html[url_start : url_end]
 
-        if url not in listings_url:
-            listings_url.append(url)
+        urls.add(url)
         
         listing_start = html.find('<td', url_end)
         listing_start = html.find('<div class="field-content">', listing_start)
 
-    return listings_url
-
+    return urls
 
 def get_listing_details(url):
-    #url = '%s%s' % (domain, url)
-    url = 'http://www.hlresidential.com/listing/sale/191983/gravesend'
+    url = '%s%s' % (domain, url)
     html = urllib2.urlopen(url).read()
 
     listing = {
@@ -50,6 +63,8 @@ def get_listing_details(url):
         'amenities': [],
         'maintenance': '',
         'description': '',
+        'subway': [],
+        'agent': '',
     }
 
     title_start = html.find('<h1 id="list-title">') + len('<h1 id="list-title">')
@@ -125,23 +140,45 @@ def get_listing_details(url):
         maintenance_end = html.find('</', maintenance_start)
         listing['maintenance'] = sanitize_html(html[maintenance_start : maintenance_end]).replace('\n', '')
 
-    """
-    description_start = html.find('<div class="listing_row_descr">')
+    description_start = html.find('field-type-text-with-summary')
     if description_start != -1:
         description_start = html.find('<div class="field-items">', description_start)
         description_end = html.find('<div class="more_body">', description_start)
         listing['description'] = sanitize_html(html[description_start : description_end])
-    """
+
+    subway_start = html.find('<span class="subway_')
+    while subway_start != -1:
+        subway_start += len('<span class="subway_')
+        subway_end = html.find('"', subway_start)
+        listing['subway'].append(html[subway_start : subway_end])
+        subway_start = html.find('<span class="subway_', subway_end)
+
+    agent_start = html.find('<div class="listing_row_descr">Agents</div>')
+    if agent_start != -1:
+        agent_start = html.find('<a href="/', agent_start) + len('<a href="/')
+        agent_end = html.find('"', agent_start)
+        listing['agent'] = html[agent_start : agent_end]
 
     return listing
+
+def data_to_json(filename, data):
+    f = open(filename, 'w')
+    jdata = json.dumps(data)
+    f.write(jdata)
+    f.close()
 
 if __name__ == '__main__':
     listings_url = get_listings_url()
     listings = []
-    
+  
+    print 'Got', len(listings_url), 'url(s).'
+
     for url in listings_url:
         print 'Parsing', url
         listing = get_listing_details(url)
-        print listing
-        break
+        #pprint.pprint(listing)
         listings.append(listing)
+
+    print 'Export to JSON.'
+    data_to_json('listings.json', listings)
+    print 'Done!'
