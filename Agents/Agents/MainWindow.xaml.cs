@@ -31,6 +31,8 @@ namespace Agents
         KinectSensorChooser _sensorChooser;
         ObservableCollection<Agent> _agents = new ObservableCollection<Agent>();
         ObservableCollection<Agent> _selectedAgents = new ObservableCollection<Agent>();
+        ObservableCollection<Listing> _listings = new ObservableCollection<Listing>();
+        ObservableCollection<Listing> _selectedListings = new ObservableCollection<Listing>();
 
         public MainWindow()
         {
@@ -52,7 +54,7 @@ namespace Agents
 
             // load data and navigate to agents page
             LoadData();
-            NavigateToAgents(null, null);
+            NavigateToListings(null, null);
         }
 
         /// <summary>
@@ -117,6 +119,18 @@ namespace Agents
             {
                 _agents.Add(agent);
             }
+
+            json = File.ReadAllText(@"Data/listings.json");
+            var listings_list = JsonConvert.DeserializeObject<ObservableCollection<Listing>>(json);
+
+            foreach (var listing in listings_list)
+            {
+                _listings.Add(listing);
+                if (_listings.Count == 10)
+                {
+                    break;
+                }
+            }
         }
 
         /// <summary>
@@ -128,12 +142,45 @@ namespace Agents
         }
 
         /// <summary>
+        /// Observable collection, return a list of listings
+        /// </summary>
+        public ObservableCollection<Listing> Listings
+        {
+            get { return _listings; }
+        }
+
+        /// <summary>
         /// Observable collection, returns a list of selected agents.
         /// Not more than 1 !!!
         /// </summary>
         public ObservableCollection<Agent> SelectedAgents
         {
             get { return _selectedAgents; }
+        }
+
+        /// <summary>
+        /// Observable collection, returns a list of selected listing.
+        /// Not more than 1 !!!
+        /// </summary>
+        public ObservableCollection<Listing> SelectedListings
+        {
+            get { return _selectedListings; }
+        }
+
+        /// <summary>
+        /// Listing click event => go to listing details.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ListingClick(object sender, RoutedEventArgs e)
+        {
+            KinectTileButton btn = sender as KinectTileButton;
+
+            if (btn != null)
+            {
+                Listing listing = btn.Tag as Listing;
+                NavigateToListingDetails(listing);
+            }
         }
 
         /// <summary>
@@ -159,7 +206,7 @@ namespace Agents
         /// <param name="e"></param>
         private void ShowHomePage(object sender, RoutedEventArgs e)
         {
-            NavigateToAgents(sender, e);
+            NavigateToListings(sender, e);
         }
 
         /// <summary>
@@ -173,8 +220,25 @@ namespace Agents
             this.menuGames.Background = Brushes.White;
 
             /// grids
-            // this.gridAgents.Visibility = Visibility.Visible;
-            // this.gridAgentDetails.Visibility = Visibility.Collapsed;
+            CollapseAllGrids();
+            this.gridListings.Visibility = Visibility.Visible;
+        }
+
+        /// <summary>
+        /// Navigate to agent details page
+        /// </summary>
+        /// <param name="agent"></param>
+        private void NavigateToListingDetails(Listing listing)
+        {
+            if (listing != null)
+            {
+                _selectedListings.Clear();
+                _selectedListings.Add(listing);
+
+                // grids
+                CollapseAllGrids();
+                this.gridListingDetails.Visibility = Visibility.Visible;
+            }
         }
 
         /// <summary>
@@ -203,8 +267,8 @@ namespace Agents
             this.menuGames.Background = Brushes.White;
 
             // grids
+            CollapseAllGrids();
             this.gridAgents.Visibility = Visibility.Visible;
-            this.gridAgentDetails.Visibility = Visibility.Collapsed;
         }
 
         /// <summary>
@@ -219,9 +283,20 @@ namespace Agents
                 _selectedAgents.Add(agent);
 
                 // grids
-                this.gridAgents.Visibility = Visibility.Collapsed;
+                CollapseAllGrids();
                 this.gridAgentDetails.Visibility = Visibility.Visible;
             }
+        }
+
+        /// <summary>
+        /// Hides all pages
+        /// </summary>
+        private void CollapseAllGrids()
+        {
+            this.gridListings.Visibility = Visibility.Collapsed;
+            this.gridListingDetails.Visibility = Visibility.Collapsed;
+            this.gridAgents.Visibility = Visibility.Collapsed;
+            this.gridAgentDetails.Visibility = Visibility.Collapsed;
         }
 
         #endregion

@@ -40,8 +40,138 @@
                 <k:KinectSensorChooserUI Grid.Column="4" HorizontalAlignment="Center" VerticalAlignment="Top" Name="sensorChooserUi" />
             </Grid>
 
+            <!-- Listings List-->
+            <Grid Grid.Row="1" x:Name="gridListings" Visibility="Visible">
+                <k:KinectScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Disabled">
+                    <ItemsControl ItemsSource="{Binding Listings}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <k:KinectTileButton Label="{Binding Price}" Tag="{Binding ListingObject}" Width="300" Height="300" Click="ListingClick">
+                                    <Grid>
+                                        <Image Source="pack://application:,,,/Images/default-photo.png" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <Image Source="{Binding Images[0]}" Stretch="UniformToFill" />
+                                    </Grid>
+                                </k:KinectTileButton>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Vertical" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                </k:KinectScrollViewer>
+            </Grid>
+
+            <!-- Listing Details -->
+            <Grid Grid.Row="1" x:Name="gridListingDetails" Visibility="Collapsed">
+                <ItemsControl ItemsSource="{Binding SelectedListings}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="105 0 105 0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition></ColumnDefinition>
+                                    <ColumnDefinition></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Orientation="Vertical" Grid.Column="0">
+                                    <Grid>
+                                        <Image Source="pack://application:,,,/Images/default-photo.png" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <Image Source="{Binding Images[0]}" Stretch="UniformToFill" />
+                                    </Grid>
+                                    <ItemsControl ItemsSource="{Binding Images}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <k:KinectTileButton Label="" Tag="{Binding}" Width="100" Height="70">
+                                                    <Grid>
+                                                        <Image Source="pack://application:,,,/Images/default-photo.png" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                        <Image Source="{Binding}" Stretch="UniformToFill" />
+                                                    </Grid>
+                                                </k:KinectTileButton>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Orientation="Horizontal" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                    </ItemsControl>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Vertical" Grid.Column="1" Margin="15 0 0 0">
+                                    <TextBlock Text="{Binding Title}" FontSize="30" FontFamily="Segoe UI" FontWeight="Bold" Margin="0 10 0 0" />
+                                    <TextBlock Text="{Binding Address}" FontSize="20" FontFamily="Segoe UI" FontWeight="Bold" Margin="0 10 0 0" />
+                                    <k:KinectScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                                        <StackPanel Orientation="Vertical" Margin="0 -80 0 0">
+                                            <TextBlock Text="Listing Details" FontSize="20" FontWeight="Bold" Margin="0 15 0 0" />
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition />
+                                                    <RowDefinition />
+                                                    <RowDefinition />
+                                                    <RowDefinition />
+                                                    <RowDefinition />
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition />
+                                                </Grid.ColumnDefinitions>
+                                                
+                                                <TextBlock Text="Price" Grid.Column="0" Grid.Row="0" FontSize="20" />
+                                                <TextBlock Text="Type" Grid.Column="0" Grid.Row="1" FontSize="20" />
+                                                <TextBlock Text="Bedrooms" Grid.Column="0" Grid.Row="2" FontSize="20" />
+                                                <TextBlock Text="Bathrooms" Grid.Column="0" Grid.Row="3" FontSize="20" />
+                                                <TextBlock Text="Interior size (sq. ft.)" Grid.Column="0" Grid.Row="4" FontSize="20" />
+                                                
+                                                <TextBlock Text="{Binding Price}" Grid.Column="1" Grid.Row="0" FontSize="20" />
+                                                <TextBlock Text="{Binding Type}" Grid.Column="1" Grid.Row="1" FontSize="20" />
+                                                <TextBlock Text="{Binding Bedrooms}" Grid.Column="1" Grid.Row="2" FontSize="20" />
+                                                <TextBlock Text="{Binding Bathroms}" Grid.Column="1" Grid.Row="3" FontSize="20" />
+                                                <TextBlock Text="{Binding Size}" Grid.Column="1" Grid.Row="4" FontSize="20" />
+                                            </Grid>
+                                            <TextBlock Text="Amenities" FontSize="20" FontWeight="Bold" Margin="0 25 0 0" />
+                                            <ItemsControl ItemsSource="{Binding Amenities}" Margin="0 10 0 0">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Text="{Binding}" FontSize="20" FontFamily="Segoe UI" Margin="0 0 20 0" />
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <WrapPanel Orientation="Horizontal" />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                            </ItemsControl>
+
+                                            <TextBlock Text="Description" FontSize="20" FontWeight="Bold" Margin="0 25 0 0" />
+                                            <TextBlock Text="{Binding Description}" FontSize="20" TextWrapping="Wrap" TextAlignment="Justify" />
+
+                                            <TextBlock Text="Nearby subway lines" FontSize="20" FontWeight="Bold" Margin="0 25 0 0" />
+                                            <ItemsControl ItemsSource="{Binding Subway}" Margin="0 10 0 0">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Border BorderThickness="1" BorderBrush="Gray" Margin="5" Padding="5" CornerRadius="40" MinWidth="40" MinHeight="40">
+                                                            <TextBlock Text="{Binding}" FontSize="15" FontFamily="Segoe UI" Padding="5" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                        </Border>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <StackPanel Orientation="Horizontal" />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                            </ItemsControl>
+                                        </StackPanel>
+                                    </k:KinectScrollViewer>
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+
             <!-- Agents List -->
-            <Grid Grid.Row="1" x:Name="gridAgents" Visibility="Visible">
+            <Grid Grid.Row="1" x:Name="gridAgents" Visibility="Collapsed">
                 <k:KinectScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Disabled">
                     <ItemsControl ItemsSource="{Binding Agents}">
                         <ItemsControl.ItemTemplate>
