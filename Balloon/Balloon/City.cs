@@ -126,14 +126,7 @@ namespace Balloon
                 height = (int)(image.PixelHeight * _scale);
                 _currentWidth += width;
 
-                ////////////////////////////
-                ///////////////////////////////////////updateeeeeeeeeeeeeee
-                ////////////////////////////
                 _buildingImages.Add(new Building(index, image, new Rect(0, 0, width, height)));
-
-                //Debug.WriteLine(this.ActualWidth);
-                //Debug.WriteLine(_currentWidth);
-                //Debug.WriteLine(_buildingImages.Count);
             }
         }
 

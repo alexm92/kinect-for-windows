@@ -109,6 +109,8 @@ namespace Balloon
 
             if (p.Points.Count >= 2 && q.Points.Count >= 2)
             {
+                p.Points.Add(p.Points[0]);
+                q.Points.Add(q.Points[0]);
                 for (i = 1; i < p.Points.Count; i++)
                 {
                     for (j = 1; j < q.Points.Count; j++) {

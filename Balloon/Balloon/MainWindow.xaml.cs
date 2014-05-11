@@ -46,47 +46,57 @@ namespace Balloon
                 var x = PlayerBalloon.Margin.Left;
                 var y = x + PlayerBalloon.Width;
 
+                buildingsOverlay.Children.Clear();
                 foreach (var building in buildings)
                 {
                     if (building.Border != null && building.Border.X >= x && building.Border.X <= y)
                     {
-                        Debug.WriteLine(building.Border.ToString());
-                        if (building.Id == 2)
-                            Check(building);
+                        Check(building);
                     }
                 }
-                Debug.WriteLine("-------------");
             }
         }
 
+        /// <summary>
+        /// Check if the balloon hits a building
+        /// </summary>
+        /// <param name="building"></param>
         void Check(Building building)
         {
-            Polygon building_polygon = GetPolyline(Building2Polygon.Points, building);
+            var obj = this.FindName("Building" + building.Id + "Polygon") as Polygon;
+            Polygon building_polygon = GetPolygon(obj, building);
 
             var balloonPoint = PlayerBalloon.TransformToAncestor(Application.Current.MainWindow).Transform(new Point(0, 0));
-            Polygon balloon_polygon = GetPolyline(BalloonPolygon.Points, new Building(0, null, new Rect(balloonPoint.X, balloonPoint.Y, PlayerBalloon.Width, PlayerBalloon.Height)));
+            Polygon balloon_polygon = GetPolygon(BalloonPolygon, new Building(-1, null, new Rect(balloonPoint.X, balloonPoint.Y, PlayerBalloon.Width, PlayerBalloon.Height)));
 
-            buildingsOverlay.Children.Clear();
+            //buildingsOverlay.Children.Clear();
             buildingsOverlay.Children.Add(building_polygon);
             buildingsOverlay.Children.Add(balloon_polygon);
 
             bool isIntersection = PolygonCollider.AreIntersecting(balloon_polygon, building_polygon);
             if (isIntersection)
             {
-                timer.Stop();
+                //timer.Stop();
+                this.Title = "Hit";
             }
             
         }
 
-        Polygon GetPolyline(PointCollection points, Building building)
+        /// <summary>
+        /// Generates a polygon for building
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="building"></param>
+        /// <returns></returns>
+        Polygon GetPolygon(Polygon obj, Building building)
         {
             Polygon poli = new Polygon();
-            foreach (var point in points)
+            foreach (var point in obj.Points)
             {
                 var size = new Size(225, 339);
-                if (building.Id == 2)
+                if (building.Id > 0)
                 {
-                    size = new Size(Building2Polygon.Width, Building2Polygon.Height);
+                    size = new Size(obj.Width, obj.Height);
                 }
                 poli.Points.Add(new Point(building.Border.X + point.X * building.Border.Width / size.Width, building.Border.Y + point.Y * building.Border.Height / size.Height));
             }
@@ -94,6 +104,17 @@ namespace Balloon
             poli.Opacity = 0.5;
 
             return poli;
+        }
+
+        /// <summary>
+        /// Move the balloon on the Y axis
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Grid_MouseMove(object sender, MouseEventArgs e)
+        {
+            var point = e.GetPosition(Application.Current.MainWindow);
+            PlayerBalloon.Margin = new Thickness(50, point.Y, 0, 0);
         }
     }
 }

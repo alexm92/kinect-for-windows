@@ -2,14 +2,17 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:Balloon"
-        Title="MainWindow" Height="800" Width="1280" WindowState="Maximized" Loaded="Window_Loaded">
-    <Grid Background="#FF1D1E30">
+        Title="MainWindow" Height="800" Width="1280" WindowState="Maximized" Loaded="Window_Loaded"
+        Background="#FF1D1E30" MouseMove="Grid_MouseMove">
+    <Grid>
         <local:City x:Name="myCity" IsEnabled="True" />
-        <Image x:Name="PlayerBalloon" Source="D:\GitHub\kinect-for-windows\Balloon\Balloon\Resources\balloon.png" Width="100" Height="150" HorizontalAlignment="Left" Margin="50, 0, 0, 0"/>
+        <Image x:Name="PlayerBalloon" Source="D:\GitHub\kinect-for-windows\Balloon\Balloon\Resources\balloon.png" Width="100" Height="150" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="50, 0, 0, 0"/>
         <Canvas x:Name="buildingsOverlay" />
         
         <!-- Polygons-->
-        <Polygon x:Name="BalloonPolygon" Points="91,283 91,270 95,265 30,175 17,150 13,130 14,110 26,85 50,65 80,55 123,55 161,70 180,90 189,119 188,140 180,165 112,264 112,270 117,270 117,283" Width="225" Height="339" Fill="Green" Opacity=".5" Visibility="Hidden" />
-        <Polygon x:Name="Building2Polygon" Points="0,423 0,169 15,169 15,100 23,100 23,75 30,75 35,62 48,54 53,45 53,2 57,2 57,45 63,55 75,64 80,75 88,75 88,101 96,101 96,169 110,169, 110,423"  Fill="Green" Width="111" Height="423" Opacity=".5" Visibility="Hidden" />
+        <Polygon x:Name="BalloonPolygon" Points="91,281.98 91,272.98 95,263.98 72,227.98 31,174.98 17,149.98 14,126.98 17,103.98 29,82.98 55,62.98 76,56.98 107,53.98 134,58.98 152,64.98 168,76.98 181,93.98 186,109.98 189,125.98 186,148.98 172,176.98 115,258.98 117,271.98 117,282.98" Width="225" Height="339" Visibility="Hidden" />
+        <Polygon x:Name="Building1Polygon" Points="1,764.96 1,431.96 10,429.96 10,408.96 14,407.96 15,367.96 20,365.96 22,319.96 28,318.96 28,134.96 42,88 42,5 44,6 45,88 60,134 58,319 66,320 67,366 73,368 73,409 78,409 79,432 86,432 85,764.96" Width="87" Height="766" Visibility="Hidden" />
+        <Polygon x:Name="Building2Polygon" Points="1,421.98 1,169.98 14,168.98 16,100.98 23,100.98 24,75.98 29,79.98 32,67.98 39,59.98 49,53.98 49,47.98 53,44.98 54,2.98000000000002 57,2.98000000000002 59,45.98 63,51.98 70,59.98 76,66.98 79,73.98 80,81.98 87,75.98 89,100.98 96,101.98 97,169.98 110,170.98 111,420.98" Width="111" Height="423" Visibility="Hidden" />
+        <Polygon x:Name="Building3Polygon" Points="0.5,301.98 0.5,117.98 10.5,110.98 11.5,58.98 20.5,58.98 21.5,46.98 26.5,45.98 25.5,35.98 28.5,0.980000000000018 29.5,0.980000000000018 30.5,35.98 33.5,44.98 46.5,45.98 47.5,57.98 57.5,59.98 57.5,87.98 74.5,77.98 75.5,144.98 113.5,182.98 113.5,299.98" Width="114" Height="303" Visibility="Hidden" />
     </Grid>
 </Window>
