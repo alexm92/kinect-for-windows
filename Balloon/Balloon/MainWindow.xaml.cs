@@ -51,7 +51,7 @@ namespace Balloon
                     if (building.Border != null && building.Border.X >= x && building.Border.X <= y)
                     {
                         Debug.WriteLine(building.Border.ToString());
-                        if (building.Border.Height >= 423 * 0.7 - 1 && building.Border.Height <= 423 * 0.7 + 1)
+                        if (building.Id == 2)
                             Check(building);
                     }
                 }
@@ -70,7 +70,12 @@ namespace Balloon
             buildingsOverlay.Children.Add(building_polygon);
             buildingsOverlay.Children.Add(balloon_polygon);
 
-            //this.Title = "" + (geometry.GetFlattenedPathGeometry().Figures.Count > 0);
+            bool isIntersection = PolygonCollider.AreIntersecting(balloon_polygon, building_polygon);
+            if (isIntersection)
+            {
+                timer.Stop();
+            }
+            
         }
 
         Polygon GetPolyline(PointCollection points, Building building)
