@@ -71,21 +71,6 @@ namespace Balloon
         private void TimerTick(object sender, EventArgs e)
         {
             All();
-
-            //Thread t = new Thread(new ThreadStart(Draw));
-            //t.SetApartmentState(ApartmentState.MTA);
-            //t.IsBackground = true;
-            //t.Priority = ThreadPriority.Highest;
-            //t.Start();
-
-            //_timer.Stop();
-            //BackgroundWorker worker = new BackgroundWorker();
-            //worker.DoWork += worker_DoWork;
-            //worker.RunWorkerCompleted += delegate
-            //{
-            //    _timer.Start();
-            //};
-            //worker.RunWorkerAsync();
         }
 
         void All()
@@ -93,11 +78,6 @@ namespace Balloon
             _leftStartMargin -= _speed;
             Update();
             Draw();
-        }
-
-        void worker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            All();
         }
 
         /// <summary>

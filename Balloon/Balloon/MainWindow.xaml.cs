@@ -49,7 +49,9 @@ namespace Balloon
                 buildingsOverlay.Children.Clear();
                 foreach (var building in buildings)
                 {
-                    if (building.Border != null && building.Border.X >= x && building.Border.X <= y)
+                    if (building.Border != null && 
+                        x <= building.Border.X + building.Border.Width && 
+                        building.Border.X <= y)
                     {
                         Check(building);
                     }
@@ -69,7 +71,6 @@ namespace Balloon
             var balloonPoint = PlayerBalloon.TransformToAncestor(Application.Current.MainWindow).Transform(new Point(0, 0));
             Polygon balloon_polygon = GetPolygon(BalloonPolygon, new Building(-1, null, new Rect(balloonPoint.X, balloonPoint.Y, PlayerBalloon.Width, PlayerBalloon.Height)));
 
-            //buildingsOverlay.Children.Clear();
             buildingsOverlay.Children.Add(building_polygon);
             buildingsOverlay.Children.Add(balloon_polygon);
 
