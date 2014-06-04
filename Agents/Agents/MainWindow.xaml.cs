@@ -126,10 +126,10 @@ namespace Agents
             foreach (var listing in listings_list)
             {
                 _listings.Add(listing);
-                if (_listings.Count == 10)
-                {
-                    break;
-                }
+                //if (_listings.Count == 10)
+                //{
+                //    break;
+                //}
             }
         }
 

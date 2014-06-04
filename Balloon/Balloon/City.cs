@@ -85,7 +85,6 @@ namespace Balloon
         /// </summary>
         private void Update()
         {
-            BitmapFrame image;
             int width, height, index;
 
             // remove the first building if it goes out of the screen
@@ -100,7 +99,9 @@ namespace Balloon
             while (_currentWidth <= this.ActualWidth + 200)
             {
                 index = _rand.Next(1, 4);
-                image = BitmapDecoder.Create(new Uri(@"D:\GitHub\kinect-for-windows\Balloon\Balloon\Resources\building" + index + ".png", UriKind.Absolute), BitmapCreateOptions.None, BitmapCacheOption.OnLoad).Frames.First();
+                //var uri = new Uri("pack://application:,,,/Images/building" + index + ".png");
+                var uri = new Uri(@"D:\GitHub\kinect-for-windows\Balloon\Balloon\Resources\building" + index + ".png");
+                var image = new BitmapImage(uri);
 
                 width = (int)(image.PixelWidth * _scale);
                 height = (int)(image.PixelHeight * _scale);

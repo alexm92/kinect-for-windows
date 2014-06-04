@@ -11,10 +11,10 @@ namespace Balloon
     public class Building
     {
         int _id;
-        BitmapFrame _bitmap;
+        BitmapImage _bitmap;
         Rect _border;
 
-        public Building(int id, BitmapFrame bitmap, Rect border)
+        public Building(int id, BitmapImage bitmap, Rect border)
         {
             this._id = id;
             this._bitmap = bitmap;
@@ -25,7 +25,7 @@ namespace Balloon
             get { return this._id; }
             set { this._id = value; }
         }
-        public BitmapFrame Bitmap
+        public BitmapImage Bitmap
         {
             get { return this._bitmap; }
             set { this._bitmap = value; }
