@@ -20,6 +20,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
+using Balloon;
 
 namespace Agents
 {
@@ -33,6 +35,9 @@ namespace Agents
         ObservableCollection<Agent> _selectedAgents = new ObservableCollection<Agent>();
         ObservableCollection<Listing> _listings = new ObservableCollection<Listing>();
         ObservableCollection<Listing> _selectedListings = new ObservableCollection<Listing>();
+
+        DispatcherTimer _timerGame;
+        Skeleton [] _skeletons;
 
         public MainWindow()
         {
@@ -51,6 +56,9 @@ namespace Agents
             // Bind the sensor chooser's current sensor to the KinectRegion
             var regionSensorBinding = new Binding("Kinect") { Source = this._sensorChooser };
             BindingOperations.SetBinding(this.kinectRegion, KinectRegion.KinectSensorProperty, regionSensorBinding);
+
+            // set event
+            kinectRegion.HandPointersUpdated += kinectRegion_HandPointersUpdated;
 
             // load data and navigate to agents page
             LoadData();
@@ -107,6 +115,7 @@ namespace Agents
             }
         }
 
+        #region HL
         /// <summary>
         /// Loads agents from json file
         /// </summary>
@@ -197,6 +206,102 @@ namespace Agents
                 NavigateToAgentDetails(agent);
             }
         }
+        #endregion
+
+        #region Game
+        void timer_Tick(object sender, EventArgs e)
+        {
+            var buildings = myCity._buildingImages;
+
+            if (buildings.Count > 0)
+            {
+                var x = PlayerBalloon.Margin.Left;
+                var y = x + PlayerBalloon.Width;
+
+                buildingsOverlay.Children.Clear();
+                foreach (var building in buildings)
+                {
+                    if (building.Border != null &&
+                        x <= building.Border.X + building.Border.Width &&
+                        building.Border.X <= y)
+                    {
+                        Check(building);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Check if the balloon hits a building
+        /// </summary>
+        /// <param name="building"></param>
+        void Check(Building building)
+        {
+            var obj = this.FindName("Building" + building.Id + "Polygon") as Polygon;
+            Polygon building_polygon = GetPolygon(obj, building);
+            Polygon balloon_polygon = GetPolygon(BalloonPolygon, new Building(-1, null, new Rect(PlayerBalloon.Margin.Left, PlayerBalloon.Margin.Top, PlayerBalloon.Width, PlayerBalloon.Height)));
+
+            //buildingsOverlay.Children.Add(building_polygon);
+            //buildingsOverlay.Children.Add(balloon_polygon);
+
+            bool isIntersection = PolygonCollider.AreIntersecting(balloon_polygon, building_polygon);
+            if (isIntersection)
+            {
+                //timer.Stop();
+                this.Title = "Hit";
+            }
+        }
+
+        /// <summary>
+        /// Generates a polygon for building
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="building"></param>
+        /// <returns></returns>
+        Polygon GetPolygon(Polygon obj, Building building)
+        {
+            Polygon poli = new Polygon();
+            foreach (var point in obj.Points)
+            {
+                var size = new Size(225, 339);
+                if (building.Id > 0)
+                {
+                    size = new Size(obj.Width, obj.Height);
+                }
+                poli.Points.Add(new Point(building.Border.X + point.X * building.Border.Width / size.Width, building.Border.Y + point.Y * building.Border.Height / size.Height));
+            }
+            poli.Fill = Brushes.Green;
+            poli.Opacity = 0.5;
+
+            return poli;
+        }
+
+        /// <summary>
+        /// Move the balloon on the Y axis
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Grid_MouseMove(object sender, MouseEventArgs e)
+        {
+            var point = e.GetPosition(Application.Current.MainWindow);
+            this.Title = point.ToString();
+            double y = point.Y - gridHeader.ActualHeight - PlayerBalloon.ActualHeight * 0.5;
+            PlayerBalloon.Margin = new Thickness(50, y, 0, 0);
+        }
+
+        void kinectRegion_HandPointersUpdated(object sender, EventArgs e)
+        {
+            var hand = (from h in kinectRegion.HandPointers where h.IsActive && h.IsPrimaryHandOfUser select h).FirstOrDefault();
+            if (hand != null)
+            {
+                var point = hand.GetPosition(Application.Current.MainWindow);
+                double y = point.Y - gridHeader.ActualHeight - PlayerBalloon.ActualHeight * 0.5;
+                this.Title = point.Y + "";
+                PlayerBalloon.Margin = new Thickness(50, y, 0, 0);
+            }
+        }
+
+        #endregion
 
         #region Navigation
         /// <summary>
@@ -251,9 +356,14 @@ namespace Agents
             this.menuAgents.Background = Brushes.White;
             this.menuGames.Background = Brushes.WhiteSmoke;
 
+            _timerGame = new DispatcherTimer();
+            _timerGame.Interval = new TimeSpan(0, 0, 0, 0, 33);
+            _timerGame.Tick += timer_Tick;
+            _timerGame.Start();
+
             /// grids
-            // this.gridAgents.Visibility = Visibility.Visible;
-            // this.gridAgentDetails.Visibility = Visibility.Collapsed;
+            CollapseAllGrids();
+            this.gridGames.Visibility = Visibility.Visible;
         }
 
         /// <summary>
@@ -297,6 +407,7 @@ namespace Agents
             this.gridListingDetails.Visibility = Visibility.Collapsed;
             this.gridAgents.Visibility = Visibility.Collapsed;
             this.gridAgentDetails.Visibility = Visibility.Collapsed;
+            this.gridGames.Visibility = Visibility.Collapsed;
         }
 
         #endregion

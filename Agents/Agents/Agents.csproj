@@ -66,6 +66,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Building.cs" />
+    <Compile Include="City.cs" />
     <Compile Include="Converters\StringToImageSource.cs" />
     <Compile Include="Listing.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -74,6 +76,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PolygonCollider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -120,6 +123,14 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\default-photo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\background.jpg" />
+    <Resource Include="Images\background2.jpg" />
+    <Resource Include="Images\balloon.png" />
+    <Resource Include="Images\building1.png" />
+    <Resource Include="Images\building2.png" />
+    <Resource Include="Images\building3.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

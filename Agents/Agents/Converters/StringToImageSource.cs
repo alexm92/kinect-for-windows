@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace Agents.Converters
             try
             {
                 string filename = value as string;
-                string img_path = System.AppDomain.CurrentDomain.BaseDirectory + "Data\\" + filename;
+                string img_path = System.AppDomain.CurrentDomain.BaseDirectory + "Data\\Images\\" + filename;
                 Uri uri = new Uri(img_path);
                 BitmapImage bmp = new BitmapImage(uri);
                 return bmp;

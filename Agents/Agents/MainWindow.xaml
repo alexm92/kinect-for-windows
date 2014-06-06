@@ -3,8 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:k="http://schemas.microsoft.com/kinect/2013"
         xmlns:converters="clr-namespace:Agents.Converters"
+        xmlns:local="clr-namespace:Balloon"
         Title="MainWindow" Height="720" Width="1280"
-        Loaded="Window_Loaded" WindowState="Maximized" WindowStyle="None">
+        Loaded="Window_Loaded"
+        WindowState="Maximized" WindowStyle="None">
     <Window.Resources>
         <converters:StringToImageSource x:Key="StringToImageSource" />
     </Window.Resources>
@@ -18,7 +20,7 @@
 
 
             <!-- header -->
-            <Grid Grid.Row="0" Margin="105 0 105 0">
+            <Grid x:Name="gridHeader" Grid.Row="0" Margin="105 0 105 0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"></ColumnDefinition>
                     <ColumnDefinition></ColumnDefinition>
@@ -184,7 +186,7 @@
                                 <k:KinectTileButton Label="{Binding Name}" Tag="{Binding AgentObject}" Width="300" Height="300" Click="AgentClick">
                                     <Grid>
                                         <Image Source="pack://application:,,,/Images/default-agent.png" Stretch="UniformToFill" />
-                                        <Image Source="{Binding Image}" Stretch="UniformToFill" />
+                                        <Image Source="{Binding Image, Converter={StaticResource StringToImageSource}}" Stretch="UniformToFill" />
                                     </Grid>
                                 </k:KinectTileButton>
                             </DataTemplate>
@@ -212,7 +214,7 @@
                                 <StackPanel Orientation="Vertical" Grid.Column="0">
                                     <Grid>
                                         <Image Source="pack://application:,,,/Images/default-agent.png" Stretch="UniformToFill" />
-                                        <Image Source="{Binding Image}" Stretch="UniformToFill" Width="300" Height="300" Grid.Column="0" />
+                                        <Image Source="{Binding Image, Converter={StaticResource StringToImageSource}}" Stretch="UniformToFill" Width="300" Height="300" Grid.Column="0" />
                                     </Grid>
                                     <TextBlock Text="{Binding Phone}" FontSize="25" FontFamily="Segoe UI" FontWeight="Bold" Margin="0 10 0 0" />
                                     <TextBlock Text="{Binding Email}" FontSize="20" FontFamily="Segoe UI" Margin="0 10 0 0" />
@@ -259,6 +261,19 @@
                 </ItemsControl>
             </Grid>
 
+            <!-- Games -->
+            <Grid Grid.Row="1" x:Name="gridGames" Visibility="Collapsed">
+                <!--<Image Source="pack://application:,,,/Images/background2.jpg" Stretch="UniformToFill" Margin="0 -150 0 0" />-->
+                <local:City x:Name="myCity" IsEnabled="True" />
+                <Image x:Name="PlayerBalloon" Source="pack://application:,,,/Images/balloon.png" Width="100" Height="150" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="50, 0, 0, 0"/>
+                <Canvas x:Name="buildingsOverlay" />
+
+                <!-- Polygons-->
+                <Polygon x:Name="BalloonPolygon" Points="91,281.98 91,272.98 95,263.98 72,227.98 31,174.98 17,149.98 14,126.98 17,103.98 29,82.98 55,62.98 76,56.98 107,53.98 134,58.98 152,64.98 168,76.98 181,93.98 186,109.98 189,125.98 186,148.98 172,176.98 115,258.98 117,271.98 117,282.98" Width="225" Height="339" Visibility="Hidden" />
+                <Polygon x:Name="Building1Polygon" Points="1,764.96 1,431.96 10,429.96 10,408.96 14,407.96 15,367.96 20,365.96 22,319.96 28,318.96 28,134.96 42,88 42,5 44,6 45,88 60,134 58,319 66,320 67,366 73,368 73,409 78,409 79,432 86,432 85,764.96" Width="87" Height="766" Visibility="Hidden" />
+                <Polygon x:Name="Building2Polygon" Points="1,421.98 1,169.98 14,168.98 16,100.98 23,100.98 24,75.98 29,79.98 32,67.98 39,59.98 49,53.98 49,47.98 53,44.98 54,2.98000000000002 57,2.98000000000002 59,45.98 63,51.98 70,59.98 76,66.98 79,73.98 80,81.98 87,75.98 89,100.98 96,101.98 97,169.98 110,170.98 111,420.98" Width="111" Height="423" Visibility="Hidden" />
+                <Polygon x:Name="Building3Polygon" Points="0.5,301.98 0.5,117.98 10.5,110.98 11.5,58.98 20.5,58.98 21.5,46.98 26.5,45.98 25.5,35.98 28.5,0.980000000000018 29.5,0.980000000000018 30.5,35.98 33.5,44.98 46.5,45.98 47.5,57.98 57.5,59.98 57.5,87.98 74.5,77.98 75.5,144.98 113.5,182.98 113.5,299.98" Width="114" Height="303" Visibility="Hidden" />
+            </Grid>
         </Grid>
     </k:KinectRegion>
 </Window>
