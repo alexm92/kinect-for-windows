@@ -22,6 +22,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using Balloon;
+using Gestures;
 
 namespace Agents
 {
@@ -38,6 +39,7 @@ namespace Agents
 
         DispatcherTimer _timerGame;
         Skeleton [] _skeletons;
+        GestureController _gestureController;
 
         public MainWindow()
         {
@@ -80,6 +82,7 @@ namespace Agents
                     args.OldSensor.SkeletonStream.EnableTrackingInNearRange = false;
                     args.OldSensor.DepthStream.Disable();
                     args.OldSensor.SkeletonStream.Disable();
+                    args.OldSensor.SkeletonFrameReady -= NewSensor_SkeletonFrameReady;
                 }
                 catch (InvalidOperationException)
                 {
@@ -106,12 +109,60 @@ namespace Agents
                         args.NewSensor.DepthStream.Range = DepthRange.Default;
                         args.NewSensor.SkeletonStream.EnableTrackingInNearRange = false;
                     }
+
+                    args.NewSensor.SkeletonFrameReady += NewSensor_SkeletonFrameReady;
+                    _skeletons = new Skeleton[args.NewSensor.SkeletonStream.FrameSkeletonArrayLength];
+                    _gestureController = new GestureController(new GestureType[] {
+                        GestureType.WaveRight,
+                        GestureType.WaveLeft,
+                        GestureType.SwipeLeft,
+                        GestureType.SwipeRight
+                    });
+                    _gestureController.GestureRecognized += OnGestureRecognized;
                 }
                 catch (InvalidOperationException)
                 {
                     // KinectSensor might enter an invalid state while enabling/disabling streams or stream features.
                     // E.g.: sensor might be abruptly unplugged.
                 }
+            }
+        }
+
+        void NewSensor_SkeletonFrameReady(object sender, SkeletonFrameReadyEventArgs e)
+        {
+            using (var skeletonFrame = e.OpenSkeletonFrame())
+            {
+                if (skeletonFrame != null)
+                {
+                    skeletonFrame.CopySkeletonDataTo(_skeletons);
+                    var user = (from s in _skeletons where s.TrackingState == SkeletonTrackingState.Tracked select s).FirstOrDefault();
+                    if (user != null)
+                    {
+                        _gestureController.Update(user);
+                    }
+                }
+            }
+        }
+
+        private void OnGestureRecognized(object sender, GestureEventArgs e)
+        {
+            switch (e.Type)
+            {
+                case GestureType.WaveLeft:
+                    this.Background = Brushes.Blue;
+                    break;
+
+                case GestureType.WaveRight:
+                    this.Background = Brushes.Red;
+                    break;
+
+                case GestureType.SwipeLeft:
+                    this.Background = Brushes.Green;
+                    break;
+
+                case GestureType.SwipeRight:
+                    this.Background = Brushes.Pink;
+                    break;
             }
         }
 
@@ -135,10 +186,10 @@ namespace Agents
             foreach (var listing in listings_list)
             {
                 _listings.Add(listing);
-                //if (_listings.Count == 10)
-                //{
-                //    break;
-                //}
+                if (_listings.Count == 10)
+                {
+                    break;
+                }
             }
         }
 

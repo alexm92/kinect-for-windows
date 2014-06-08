@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Balloon"
         Title="MainWindow" Height="720" Width="1280"
         Loaded="Window_Loaded"
-        WindowState="Maximized" WindowStyle="None">
+        WindowState="Maximized"> <!--WindowStyle="None">-->
     <Window.Resources>
         <converters:StringToImageSource x:Key="StringToImageSource" />
     </Window.Resources>

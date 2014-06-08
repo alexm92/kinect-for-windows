@@ -114,6 +114,10 @@
       <Project>{c6f9c31b-6130-4443-a5cc-ef0664552ecd}</Project>
       <Name>Microsoft.Kinect.Toolkit</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Gestures\Gestures.csproj">
+      <Project>{cb8c42c9-0ba3-46c3-837a-0a0320699c7d}</Project>
+      <Name>Gestures</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\default-agent.png" />
