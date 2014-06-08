@@ -32,10 +32,18 @@ namespace Agents
     public partial class MainWindow : Window
     {
         KinectSensorChooser _sensorChooser;
+
+        int _pageAgents;
+        const int AGENTS_PER_PAGE = 9;
         ObservableCollection<Agent> _agents = new ObservableCollection<Agent>();
         ObservableCollection<Agent> _selectedAgents = new ObservableCollection<Agent>();
+        ObservableCollection<Agent> _currentAgents = new ObservableCollection<Agent>();
+
+        int _pageListings;
+        const int LISTINGS_PER_PAGE = 9;
         ObservableCollection<Listing> _listings = new ObservableCollection<Listing>();
         ObservableCollection<Listing> _selectedListings = new ObservableCollection<Listing>();
+        ObservableCollection<Listing> _currentListings = new ObservableCollection<Listing>();
 
         DispatcherTimer _timerGame;
         Skeleton [] _skeletons;
@@ -149,19 +157,29 @@ namespace Agents
             switch (e.Type)
             {
                 case GestureType.WaveLeft:
-                    this.Background = Brushes.Blue;
-                    break;
-
                 case GestureType.WaveRight:
-                    this.Background = Brushes.Red;
+                    // start timers at wave
+                    if (gridGames.IsVisible)
+                    {
+                        if (myCity._timer != null)
+                        {
+                            myCity._timer.Start();
+                        }
+                        if (_timerGame != null)
+                        {
+                            _timerGame.Start();
+                        }
+                    }
                     break;
 
                 case GestureType.SwipeLeft:
-                    this.Background = Brushes.Green;
+                    if (gridAgents.IsVisible) { NextAgentsPage(); }
+                    if (gridListings.IsVisible) { NextListingsPage(); }
                     break;
 
                 case GestureType.SwipeRight:
-                    this.Background = Brushes.Pink;
+                    if (gridAgents.IsVisible) { PrevAgentsPage(); }
+                    if (gridListings.IsVisible) { PrevListingsPage(); }
                     break;
             }
         }
@@ -179,6 +197,7 @@ namespace Agents
             {
                 _agents.Add(agent);
             }
+            GetAgents();
 
             json = File.ReadAllText(@"Data/listings.json");
             var listings_list = JsonConvert.DeserializeObject<ObservableCollection<Listing>>(json);
@@ -186,9 +205,70 @@ namespace Agents
             foreach (var listing in listings_list)
             {
                 _listings.Add(listing);
-                if (_listings.Count == 10)
+            }
+            GetListings();
+        }
+
+        void NextAgentsPage()
+        {
+            if (_pageAgents + 1 < _agents.Count() * 1.0 / AGENTS_PER_PAGE)
+            {
+                _pageAgents++;
+            }
+            GetAgents();
+        }
+        void PrevAgentsPage()
+        {
+            if (_pageAgents - 1 >= 0)
+            {
+                _pageAgents--;
+            }
+            GetAgents();
+        }
+        void GetAgents()
+        {
+            var index = 0;
+            for (var i = _pageAgents * AGENTS_PER_PAGE; i >= 0 && index < AGENTS_PER_PAGE - 1 && i < _agents.Count(); i++, index++)
+            {
+                if (index < _currentAgents.Count())
                 {
-                    break;
+                    _currentAgents[index] = _agents[i];
+                }
+                else
+                {
+                    _currentAgents.Add(_agents[i]);
+                }
+            }
+        }
+
+        void NextListingsPage()
+        {
+            if (_pageListings + 1 < _listings.Count() * 1.0 / LISTINGS_PER_PAGE)
+            {
+                _pageListings++;
+            }
+            GetListings();
+        }
+        void PrevListingsPage()
+        {
+            if (_pageListings - 1 >= 0)
+            {
+                _pageListings--;
+            }
+            GetListings();
+        }
+        void GetListings()
+        {
+            var index = 0;
+            for (var i = _pageListings * LISTINGS_PER_PAGE; i >= 0 && index < LISTINGS_PER_PAGE - 1 && i < _listings.Count(); i++, index++)
+            {
+                if (index < _currentListings.Count())
+                {
+                    _currentListings[index] = _listings[i];
+                }
+                else
+                {
+                    _currentListings.Add(_listings[i]);
                 }
             }
         }
@@ -217,6 +297,10 @@ namespace Agents
         {
             get { return _selectedAgents; }
         }
+        public ObservableCollection<Agent> CurrentAgents
+        {
+            get { return _currentAgents; }
+        }
 
         /// <summary>
         /// Observable collection, returns a list of selected listing.
@@ -225,6 +309,10 @@ namespace Agents
         public ObservableCollection<Listing> SelectedListings
         {
             get { return _selectedListings; }
+        }
+        public ObservableCollection<Listing> CurrentListings
+        {
+            get { return _currentListings; }
         }
 
         /// <summary>
@@ -410,9 +498,7 @@ namespace Agents
             _timerGame = new DispatcherTimer();
             _timerGame.Interval = new TimeSpan(0, 0, 0, 0, 33);
             _timerGame.Tick += timer_Tick;
-            _timerGame.Start();
-
-            myCity._timer.Start();
+            //_timerGame.Start();
 
             /// grids
             CollapseAllGrids();
