@@ -263,16 +263,23 @@
 
             <!-- Games -->
             <Grid Grid.Row="1" x:Name="gridGames" Visibility="Collapsed">
-                <!--<Image Source="pack://application:,,,/Images/background2.jpg" Stretch="UniformToFill" Margin="0 -150 0 0" />-->
-                <local:City x:Name="myCity" IsEnabled="True" />
+                <Canvas ClipToBounds="True">
+                    <Image Source="pack://application:,,,/Images/bg.jpg" Stretch="UniformToFill" Canvas.Left="0" Canvas.Bottom="0" />
+                </Canvas>
+                <local:City x:Name="myCity" IsEnabled="False" />
                 <Image x:Name="PlayerBalloon" Source="pack://application:,,,/Images/balloon.png" Width="100" Height="150" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="50, 0, 0, 0"/>
                 <Canvas x:Name="buildingsOverlay" />
+                
+                <!--<Image Source="pack://application:,,,/Images/menu.png" Stretch="UniformToFill" VerticalAlignment="Center" HorizontalAlignment="Center" />-->
 
                 <!-- Polygons-->
                 <Polygon x:Name="BalloonPolygon" Points="91,281.98 91,272.98 95,263.98 72,227.98 31,174.98 17,149.98 14,126.98 17,103.98 29,82.98 55,62.98 76,56.98 107,53.98 134,58.98 152,64.98 168,76.98 181,93.98 186,109.98 189,125.98 186,148.98 172,176.98 115,258.98 117,271.98 117,282.98" Width="225" Height="339" Visibility="Hidden" />
-                <Polygon x:Name="Building1Polygon" Points="1,764.96 1,431.96 10,429.96 10,408.96 14,407.96 15,367.96 20,365.96 22,319.96 28,318.96 28,134.96 42,88 42,5 44,6 45,88 60,134 58,319 66,320 67,366 73,368 73,409 78,409 79,432 86,432 85,764.96" Width="87" Height="766" Visibility="Hidden" />
-                <Polygon x:Name="Building2Polygon" Points="1,421.98 1,169.98 14,168.98 16,100.98 23,100.98 24,75.98 29,79.98 32,67.98 39,59.98 49,53.98 49,47.98 53,44.98 54,2.98000000000002 57,2.98000000000002 59,45.98 63,51.98 70,59.98 76,66.98 79,73.98 80,81.98 87,75.98 89,100.98 96,101.98 97,169.98 110,170.98 111,420.98" Width="111" Height="423" Visibility="Hidden" />
-                <Polygon x:Name="Building3Polygon" Points="0.5,301.98 0.5,117.98 10.5,110.98 11.5,58.98 20.5,58.98 21.5,46.98 26.5,45.98 25.5,35.98 28.5,0.980000000000018 29.5,0.980000000000018 30.5,35.98 33.5,44.98 46.5,45.98 47.5,57.98 57.5,59.98 57.5,87.98 74.5,77.98 75.5,144.98 113.5,182.98 113.5,299.98" Width="114" Height="303" Visibility="Hidden" />
+                <Polygon x:Name="Building1Polygon" Points="0,499.98 1,447.98 21,438.98 22,210.98 17,208.98 16,161.98 31,158.98 34,110.98 69,59.98 72,2.98000000000002 75,1.98000000000002 77,61.98 110,109.98 113,159.98 131,161.98 132,209.98 123,213.98 124,438.98 147,447.98 148,501.98" Width="149" Height="503" Visibility="Hidden" />
+                <Polygon x:Name="Building2Polygon" Points="0,613.48 0,213.48 47,174.48 48,42.48 100,0.480000000000018 101,613.48" Width="103" Height="616" Visibility="Hidden" />
+                <Polygon x:Name="Building3Polygon" Points="0,639.98 0,1.98000000000002 48,47.98 48,184.98 87,224.98 89,264.98 145,315.98 147,105.98 190,150.98 192,298.98 232,337.98 232,641.98" Width="233" Height="643" Visibility="Hidden" />
+                <Polygon x:Name="Building4Polygon" Points="0.5,536.48 0.5,216.48 18.5,214.48 18.5,128.48 28.5,125.48 29.5,96.48 64.5,56.48 66.5,1.48000000000002 70.5,1.48000000000002 73.5,58.48 110.5,97.48 111.5,126.48 117.5,130.48 120.5,214.48 138.5,216.48 138.5,538.48" Width="140" Height="540" Visibility="Hidden" />
+                <Polygon x:Name="Building5Polygon" Points="0.5,876.96 1.5,495.96 8.5,495.96 23.5,364.96 31.5,364.96 31.5,151 46.5,100 47.5,2 50.5,1 51.5,100 64.5,152 65.5,364 73.5,367 75.5,422 81.5,422 83.5,472 86.5,471 88.5,493 97.5,495 97.5,878.96" Width="98" Height="880" Visibility="Hidden" />
+                <Polygon x:Name="Building6Polygon" Points="0.5,530.48 0.5,209.48 16.5,196.48 19.5,104.48 36.5,102.48 37.5,83.48 43.5,81.48 48.5,1.48000000000002 51.5,1.48000000000002 54.5,80.48 79.5,83.48 81.5,105.48 95.5,105.48 96.5,152.48 129.5,140.48 130.5,256.48 197.5,322.48 196.5,532.48" Width="198" Height="543" Visibility="Hidden" />
             </Grid>
         </Grid>
     </k:KinectRegion>

@@ -292,8 +292,8 @@ namespace Agents
             Polygon building_polygon = GetPolygon(obj, building);
             Polygon balloon_polygon = GetPolygon(BalloonPolygon, new Building(-1, null, new Rect(PlayerBalloon.Margin.Left, PlayerBalloon.Margin.Top, PlayerBalloon.Width, PlayerBalloon.Height)));
 
-            //buildingsOverlay.Children.Add(building_polygon);
-            //buildingsOverlay.Children.Add(balloon_polygon);
+            buildingsOverlay.Children.Add(building_polygon);
+            buildingsOverlay.Children.Add(balloon_polygon);
 
             bool isIntersection = PolygonCollider.AreIntersecting(balloon_polygon, building_polygon);
             if (isIntersection)
@@ -411,6 +411,8 @@ namespace Agents
             _timerGame.Interval = new TimeSpan(0, 0, 0, 0, 33);
             _timerGame.Tick += timer_Tick;
             _timerGame.Start();
+
+            myCity._timer.Start();
 
             /// grids
             CollapseAllGrids();

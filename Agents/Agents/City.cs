@@ -28,7 +28,7 @@ namespace Balloon
         const double _scale = 0.7;
         const double _speed = 3;
 
-        DispatcherTimer _timer;
+        public DispatcherTimer _timer;
 
         /// <summary>
         /// Initializations and event handlers
@@ -48,6 +48,9 @@ namespace Balloon
 
             // event handlers
             this.Loaded += CityLoaded;
+
+            // initial game offset
+            _leftStartMargin = 500;
         }
 
         /// <summary>
@@ -98,9 +101,9 @@ namespace Balloon
             // add buildings if we can
             while (_currentWidth <= this.ActualWidth + 200)
             {
-                index = _rand.Next(1, 4);
+                index = _rand.Next(1, 7);
                 //var uri = new Uri("pack://application:,,,/Images/building" + index + ".png");
-                var uri = new Uri(@"D:\GitHub\kinect-for-windows\Balloon\Balloon\Resources\building" + index + ".png");
+                var uri = new Uri(@"D:\GitHub\kinect-for-windows\Agents\Agents\Images\building" + index + ".png");
                 var image = new BitmapImage(uri);
 
                 width = (int)(image.PixelWidth * _scale);
@@ -125,7 +128,7 @@ namespace Balloon
                     for (int i = 0; i < _buildingImages.Count; i++)
                     {
                         var obj = _buildingImages[i];
-                        obj.Border = new Rect(currentLeftMargin, this.ActualHeight - obj.Border.Height, obj.Border.Width, obj.Border.Height);
+                        obj.Border = new Rect(currentLeftMargin, this.ActualHeight - obj.Border.Height - 42, obj.Border.Width, obj.Border.Height);
                         context.DrawImage(obj.Bitmap, obj.Border);
                         currentLeftMargin += obj.Border.Width;
                     }
