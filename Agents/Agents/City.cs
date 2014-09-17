@@ -103,7 +103,7 @@ namespace Balloon
             {
                 index = _rand.Next(1, 7);
                 //var uri = new Uri("pack://application:,,,/Images/building" + index + ".png");
-                var uri = new Uri(@"D:\GitHub\kinect-for-windows\Agents\Agents\Images\building" + index + ".png");
+                var uri = new Uri(@"C:\Users\Alexandru\Desktop\kinect-for-windows\Agents\Agents\Images\building" + index + ".png");
                 var image = new BitmapImage(uri);
 
                 width = (int)(image.PixelWidth * _scale);

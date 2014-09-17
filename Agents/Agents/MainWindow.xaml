@@ -262,7 +262,7 @@
                 <Canvas ClipToBounds="True">
                     <Image Source="pack://application:,,,/Images/bg.jpg" Stretch="UniformToFill" Canvas.Left="0" Canvas.Bottom="0" />
                 </Canvas>
-                <local:City x:Name="myCity" IsEnabled="False" />
+                <local:City x:Name="myCity" IsEnabled="True" />
                 <Image x:Name="PlayerBalloon" Source="pack://application:,,,/Images/balloon.png" Width="100" Height="150" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="50, 0, 0, 0"/>
                 <Canvas x:Name="buildingsOverlay" />
                 
