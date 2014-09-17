@@ -161,6 +161,15 @@ namespace Agents
                     // start timers at wave
                     if (gridGames.IsVisible)
                     {
+                        if (myCity.gameIsStarted)
+                        {
+                            return;
+                        }
+
+                        game_result_message.Visibility = Visibility.Collapsed;
+                        game_start_message.Visibility = Visibility.Collapsed;
+                        myCity.RestartGame();
+
                         if (myCity._timer != null)
                         {
                             myCity._timer.Start();
@@ -175,11 +184,13 @@ namespace Agents
                 case GestureType.SwipeLeft:
                     if (gridAgents.IsVisible) { NextAgentsPage(); }
                     if (gridListings.IsVisible) { NextListingsPage(); }
+                    if (gridListingDetails.IsVisible) { NextListingsImage(); }
                     break;
 
                 case GestureType.SwipeRight:
                     if (gridAgents.IsVisible) { PrevAgentsPage(); }
                     if (gridListings.IsVisible) { PrevListingsPage(); }
+                    if (gridListingDetails.IsVisible) { PreviousListingsImage(); }
                     break;
             }
         }
@@ -271,6 +282,41 @@ namespace Agents
                     _currentListings.Add(_listings[i]);
                 }
             }
+        }
+
+        /// <summary>
+        /// Next listing image on swipe
+        /// </summary>
+        void NextListingsImage()
+        {
+            Listing listing = _selectedListings.FirstOrDefault();
+            int i, images_count = listing.Images.Count();
+
+            string[] images = new string[images_count];
+            for (i = 1; i < images_count; i++)
+            {
+                images[i - 1] = listing.Images[i];
+            }
+            images[i - 1] = listing.Images[0];
+
+            listing.Images = images;
+        }
+
+        /// <summary>
+        /// Previous listing image on swipe
+        /// </summary>
+        void PreviousListingsImage()
+        {
+            Listing listing = _selectedListings.FirstOrDefault();
+            int images_count = listing.Images.Count();
+
+            string[] images = new string[images_count];
+            for (int i = 0; i < images_count; i++)
+            {
+                images[(i + 1) % images_count] = listing.Images[i];
+            }
+
+            listing.Images = images;
         }
 
         /// <summary>
@@ -386,8 +432,14 @@ namespace Agents
             bool isIntersection = PolygonCollider.AreIntersecting(balloon_polygon, building_polygon);
             if (isIntersection)
             {
-                //timer.Stop();
-                this.Title = "Hit";
+                // the balloon was hit by the building
+                myCity._timer.Stop();
+                _timerGame.Stop();
+
+                game_result_message.Text = String.Format((game_result_message.Tag as String), myCity.score);
+                myCity.RestartGame();
+                game_result_message.Visibility = Visibility.Visible;
+                game_start_message.Visibility = Visibility.Visible;
             }
         }
 

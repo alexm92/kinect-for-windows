@@ -258,14 +258,20 @@
             </Grid>
 
             <!-- Games -->
-            <Grid Grid.Row="1" x:Name="gridGames" Visibility="Collapsed">
+            <Grid Grid.Row="1" x:Name="gridGames" Visibility="Visible">
                 <Canvas ClipToBounds="True">
                     <Image Source="pack://application:,,,/Images/bg.jpg" Stretch="UniformToFill" Canvas.Left="0" Canvas.Bottom="0" />
                 </Canvas>
                 <local:City x:Name="myCity" IsEnabled="True" />
                 <Image x:Name="PlayerBalloon" Source="pack://application:,,,/Images/balloon.png" Width="100" Height="150" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="50, 0, 0, 0"/>
                 <Canvas x:Name="buildingsOverlay" />
-                
+
+
+                <TextBlock x:Name="game_result_message" Tag="Bravo! You passed above {0} buildings!" FontSize="72" Margin="0, -150, 0, 0" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" />
+                <TextBlock x:Name="game_start_message" FontSize="72" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold">
+                    Wave to start the game!
+                </TextBlock>
+
                 <!--<Image Source="pack://application:,,,/Images/menu.png" Stretch="UniformToFill" VerticalAlignment="Center" HorizontalAlignment="Center" />-->
 
                 <!-- Polygons-->

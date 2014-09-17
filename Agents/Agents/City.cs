@@ -25,6 +25,9 @@ namespace Balloon
         /// </summary>
         public List<Building> _buildingImages;
 
+        public bool gameIsStarted;
+        public int score;
+
         const double _scale = 0.7;
         const double _speed = 3;
 
@@ -35,11 +38,9 @@ namespace Balloon
         /// </summary>
         public City()
         {
-            // init
             _buildingsList = new VisualCollection(this);
             _buildingImages = new List<Building>();
-            _currentWidth = 0;
-            _leftStartMargin = 0;
+
             _rand = new Random();
 
             _timer = new DispatcherTimer();
@@ -49,8 +50,21 @@ namespace Balloon
             // event handlers
             this.Loaded += CityLoaded;
 
+            RestartGame();
+        }
+
+        public void RestartGame() {
+            // init
+            gameIsStarted = false;
+            _currentWidth = 0;
+            _leftStartMargin = 0;
+            score = 0;
+            
             // initial game offset
             _leftStartMargin = 500;
+
+            //Update();
+            Draw();
         }
 
         /// <summary>
@@ -61,6 +75,7 @@ namespace Balloon
         /// <param name="e"></param>
         private void CityLoaded(object sender, RoutedEventArgs e)
         {
+            /*
             if (this.IsEnabled)
             {
                 _timer.Start();
@@ -69,6 +84,7 @@ namespace Balloon
             {
                 All();
             }
+            */
         }
 
         private void TimerTick(object sender, EventArgs e)
@@ -78,6 +94,7 @@ namespace Balloon
 
         void All()
         {
+            gameIsStarted = true;
             _leftStartMargin -= _speed;
             Update();
             Draw();
@@ -96,6 +113,7 @@ namespace Balloon
                 _currentWidth -= _buildingImages[0].Border.Width;
                 _leftStartMargin = 0;
                 _buildingImages.RemoveAt(0);
+                score += 1;
             }
 
             // add buildings if we can
